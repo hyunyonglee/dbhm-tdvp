@@ -62,9 +62,9 @@ def write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, time, path ):
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
 
-    data = {"psi": psi}
-    with h5py.File(path+"/mps/psi_time_%.3f.h5" % time, 'w') as f:
-        hdf5_io.save_to_hdf5(f, data)
+    # data = {"psi": psi}
+    # with h5py.File(path+"/mps/psi_time_%.3f.h5" % time, 'w') as f:
+    #     hdf5_io.save_to_hdf5(f, data)
 
     file_EE = open(path+"/observables/EE.txt","a", 1)    
     file_Ns = open(path+"/observables/Ns.txt","a", 1)
