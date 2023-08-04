@@ -99,6 +99,12 @@ def write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, time, path ):
         file_Dsp.close()
         file_Dnn.close()
     
+    #
+    file = open(path+"/observables.txt","a", 1)    
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.mean(Ds)) 
+               + " " + "  ".join(map(str, np.mean(Csp,axis=1))) + " " + "  ".join(map(str, np.mean(Cnn,axis=1))) 
+               + " " + "  ".join(map(str, np.mean(Dsp,axis=1))) + " " + "  ".join(map(str, np.mean(Dnn,axis=1))) + " " + "\n")
+    file.close()
     
 
 if __name__ == "__main__":
