@@ -192,4 +192,3 @@ if __name__ == "__main__":
         if (i+1) % Mstep == 0:
             Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE = measurements(psi, L)
             write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, tdvp_engine.evolved_time, path )
-            print("Step = ", i, "NNs = ", NNs, "Dsp = ", np.mean(np.abs(Dsp), axis=1), "Ds = ", Ds, "Total N = ", np.sum(Ns))
