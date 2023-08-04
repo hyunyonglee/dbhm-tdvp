@@ -1,0 +1,29 @@
+# Data folder
+data/
+logs/
+mps/
+observables/
+
+# Dependency directories
+__pycache__/
+
+# text files
+*.txt
+
+# pkl files
+*.pkl
+
+# log files
+log
+*log
+
+# test files
+test_*
+
+# Garbage
+.DS_Store
+
+#.sh
+*.sh
+
+dist*
