@@ -44,13 +44,17 @@ def measurements(psi, L):
             Csp[r-1,i] = C.real
 
             D = psi.expectation_value_term([('Bd',I),('B',I+1),('B',J),('Bd',J+1)])
+            D = D - psi.expectation_value_term([('Bd',I),('B',I+1)]) * psi.expectation_value_term([('B',J),('Bd',J+1)])
             D = D + psi.expectation_value_term([('B',I),('Bd',I+1),('Bd',J),('B',J+1)])
+            D = D - psi.expectation_value_term([('B',I),('Bd',I+1)]) * psi.expectation_value_term([('Bd',J),('B',J+1)])
             Dsp[r-1,i] = D.real
 
             C = psi.expectation_value_term([('N',I),('N',J)])
+            C = C - psi.expectation_value_term([('N',I)]) * psi.expectation_value_term([('N',J)])
             Cnn[r-1,i] = C.real
 
             D = psi.expectation_value_term([('NN',I),('NN',I+1),('NN',J),('NN',J+1)])
+            D = D - psi.expectation_value_term([('NN',I),('NN',I+1)]) * psi.expectation_value_term([('NN',J),('NN',J+1)])
             Dnn[r-1,i] = D.real
 
     return Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE
