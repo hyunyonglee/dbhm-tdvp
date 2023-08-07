@@ -29,11 +29,11 @@ def measurements(psi, L):
         Ds.append( np.abs( psi.expectation_value_term([('Bd',i+1),('B',i)]) ) )
     
     # Measuring Single-Particle Correlation
-    Csp = np.zeros((5,int(L/3)))
-    Dsp = np.zeros((5,int(L/3)))
-    Cnn = np.zeros((5,int(L/3)))
-    Dnn = np.zeros((5,int(L/3)))
-    for r in range(1,6):
+    Csp = np.zeros((9,int(L/3)))
+    Dsp = np.zeros((9,int(L/3)))
+    Cnn = np.zeros((9,int(L/3)))
+    Dnn = np.zeros((9,int(L/3)))
+    for r in range(1,10):
 
         for i in range(0,int(L/3)):
             I = int(L/3)+i
@@ -53,8 +53,8 @@ def measurements(psi, L):
             C = C - psi.expectation_value_term([('N',I)]) * psi.expectation_value_term([('N',J)])
             Cnn[r-1,i] = C.real
 
-            D = psi.expectation_value_term([('NN',I),('NN',I+1),('NN',J),('NN',J+1)])
-            D = D - psi.expectation_value_term([('NN',I),('NN',I+1)]) * psi.expectation_value_term([('NN',J),('NN',J+1)])
+            D = psi.expectation_value_term([('Bd',I+1),('B',I),('Bd',I),('B',I+1), ('Bd',J+1),('B',J),('Bd',J),('B',J+1) ])
+            D = D - psi.expectation_value_term([('Bd',I+1),('B',I),('Bd',I),('B',I+1)]) * psi.expectation_value_term([('Bd',J+1),('B',J),('Bd',J),('B',J+1)])
             Dnn[r-1,i] = D.real
 
     return Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE
@@ -86,7 +86,7 @@ def write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, time, path ):
     file_Ds.close()
     
     # Writing Correlation functions
-    for r in range(1,6):
+    for r in range(1,10):
 
         file_Csp = open(path+"/observables/Csp_r%d.txt" % r,"a", 1)
         file_Cnn = open(path+"/observables/Cnn_r%d.txt" % r,"a", 1)
