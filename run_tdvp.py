@@ -194,11 +194,11 @@ if __name__ == "__main__":
     elif init_state == '1-half':
         product_state = ['1','2'] * int(DBHM0.lat.N_sites/2)
     elif init_state == '1-half-2':
-        product_state = ['1','2'] * int(DBHM0.lat.N_sites/2)
+        product_state = ['1','1','2','2'] * int(DBHM0.lat.N_sites/4)
     elif init_state == '2-half':
         product_state = ['2','3'] * int(DBHM0.lat.N_sites/2)
     elif init_state == '2-half-2':
-        product_state = ['2','3'] * int(DBHM0.lat.N_sites/2)
+        product_state = ['2','2','3','3'] * int(DBHM0.lat.N_sites/4)
 
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
 
