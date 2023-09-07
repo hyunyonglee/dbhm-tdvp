@@ -191,6 +191,13 @@ if __name__ == "__main__":
     # initial state
     if init_state == '2':
         product_state = ['2'] * DBHM0.lat.N_sites
+    if init_state == '2+1b':
+        product_state = ['2'] * DBHM0.lat.N_sites
+        product_state[int(DBHM0.lat.N_sites/2)] = '3'
+    if init_state == '2+1d':
+        product_state = ['2'] * DBHM0.lat.N_sites
+        product_state[int(DBHM0.lat.N_sites/2)] = '3'
+        product_state[int(DBHM0.lat.N_sites/2)+1] = '1'
     elif init_state == '1-half':
         product_state = ['1','2'] * int(DBHM0.lat.N_sites/2)
     elif init_state == '1-half-2':
