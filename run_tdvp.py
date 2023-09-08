@@ -28,7 +28,7 @@ def measurements(psi, L):
     for i in range(0,L-1): 
         Ds.append( np.abs( psi.expectation_value_term([('Bd',i+1),('B',i)]) ) )
     
-    # Measuring Single-Particle Correlation
+    # Measuring Correlation Functions
     Csp = np.zeros((9,int(L/3)))
     Dsp = np.zeros((9,int(L/3)))
     Cnn = np.zeros((9,int(L/3)))
@@ -56,12 +56,39 @@ def measurements(psi, L):
             D = psi.expectation_value_term([('Bd',I+1),('B',I),('Bd',I),('B',I+1), ('Bd',J+1),('B',J),('Bd',J),('B',J+1) ])
             D = D - psi.expectation_value_term([('Bd',I+1),('B',I),('Bd',I),('B',I+1)]) * psi.expectation_value_term([('Bd',J+1),('B',J),('Bd',J),('B',J+1)])
             Dnn[r-1,i] = D.real
+    
+    # Measuring Correlation functions from the center
+    Csp_center = np.zeros(L)
+    Cnn_center = np.zeros(L)
+    Dsp_center = np.zeros(L-1)
+    Dnn_center = np.zeros(L-1)
 
-    return Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE
+    for i in range(0,L):
+        I = i
+        J = int(L/2)-1
+        
+        C = psi.expectation_value_term([('Bd',I),('B',J)])
+        C = C + psi.expectation_value_term([('B',I),('Bd',J)])
+        Csp_center[i] = C.real/2.
+        C = psi.expectation_value_term([('N',I),('N',J)])
+        C = C - psi.expectation_value_term([('N',I)]) * psi.expectation_value_term([('N',J)])
+        Cnn_center[i] = C.real
+        
+        if i<L-1:
+            D = psi.expectation_value_term([('Bd',I),('B',I+1),('B',J),('Bd',J+1)])
+            D = D - psi.expectation_value_term([('Bd',I),('B',I+1)]) * psi.expectation_value_term([('B',J),('Bd',J+1)])
+            D = D + psi.expectation_value_term([('B',I),('Bd',I+1),('Bd',J),('B',J+1)])
+            D = D - psi.expectation_value_term([('B',I),('Bd',I+1)]) * psi.expectation_value_term([('Bd',J),('B',J+1)])
+            Dsp_center[i] = D.real/2.
+            D = psi.expectation_value_term([('Bd',I+1),('B',I),('Bd',I),('B',I+1), ('Bd',J+1),('B',J),('Bd',J),('B',J+1) ])
+            D = D - psi.expectation_value_term([('Bd',I+1),('B',I),('Bd',I),('B',I+1)]) * psi.expectation_value_term([('Bd',J+1),('B',J),('Bd',J),('B',J+1)])
+            Dnn_center[i] = D.real
+
+    return Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE
 
 
 
-def write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, time, path ):
+def write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -74,16 +101,29 @@ def write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, time, path ):
     file_Ns = open(path+"/observables/Ns.txt","a", 1)
     file_NNs = open(path+"/observables/NNs.txt","a", 1)
     file_Ds = open(path+"/observables/Ds.txt","a", 1)
+    file_Csp = open(path+"/observables/Csp.txt" % r,"a", 1)
+    file_Cnn = open(path+"/observables/Cnn.txt" % r,"a", 1)
+    file_Dsp = open(path+"/observables/Dsp.txt" % r,"a", 1)
+    file_Dnn = open(path+"/observables/Dnn.txt" % r,"a", 1)
+
     
     file_EE.write(repr(time) + " " + "  ".join(map(str, EE)) + " " + "\n")
     file_Ns.write(repr(time) + " " + "  ".join(map(str, Ns)) + " " + "\n")
     file_NNs.write(repr(time) + " " + "  ".join(map(str, NNs)) + " " + "\n")
     file_Ds.write(repr(time) + " " + "  ".join(map(str, Ds)) + " " + "\n")
+    file_Csp.write(repr(time) + " " + "  ".join(map(str, Csp_center)) + " " + "\n")
+    file_Cnn.write(repr(time) + " " + "  ".join(map(str, Cnn_center)) + " " + "\n")
+    file_Dsp.write(repr(time) + " " + "  ".join(map(str, Dsp_center)) + " " + "\n")
+    file_Dnn.write(repr(time) + " " + "  ".join(map(str, Dnn_center)) + " " + "\n")
     
     file_EE.close()
     file_Ns.close()
     file_NNs.close()
     file_Ds.close()
+    file_Csp.close()
+    file_Cnn.close()
+    file_Dsp.close()
+    file_Dnn.close()
     
     # Writing Correlation functions
     for r in range(1,10):
@@ -193,11 +233,11 @@ if __name__ == "__main__":
         product_state = ['2'] * DBHM0.lat.N_sites
     if init_state == '2+1b':
         product_state = ['2'] * DBHM0.lat.N_sites
-        product_state[int(DBHM0.lat.N_sites/2)] = '3'
+        product_state[int(DBHM0.lat.N_sites/2)-1] = '3'
     if init_state == '2+1d':
         product_state = ['2'] * DBHM0.lat.N_sites
-        product_state[int(DBHM0.lat.N_sites/2)] = '3'
-        product_state[int(DBHM0.lat.N_sites/2)+1] = '1'
+        product_state[int(DBHM0.lat.N_sites/2)-1] = '3'
+        product_state[int(DBHM0.lat.N_sites/2)] = '1'
     elif init_state == '1-half':
         product_state = ['1','2'] * int(DBHM0.lat.N_sites/2)
     elif init_state == '1-half-2':
@@ -213,12 +253,12 @@ if __name__ == "__main__":
     for i in range(5):
         tdvp_engine0.run()
         
-    Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE = measurements(psi, L)
-    write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, 0, path )
+    Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
+    write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, 0, path )
 
     tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
     for i in range(Ntot):
         tdvp_engine.run()
         if (i+1) % Mstep == 0:
-            Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE = measurements(psi, L)
-            write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, EE, tdvp_engine.evolved_time, path )
+            Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
+            write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, tdvp_engine.evolved_time, path )
