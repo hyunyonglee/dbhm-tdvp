@@ -101,10 +101,10 @@ def write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Ds
     file_Ns = open(path+"/observables/Ns.txt","a", 1)
     file_NNs = open(path+"/observables/NNs.txt","a", 1)
     file_Ds = open(path+"/observables/Ds.txt","a", 1)
-    file_Csp = open(path+"/observables/Csp.txt" % r,"a", 1)
-    file_Cnn = open(path+"/observables/Cnn.txt" % r,"a", 1)
-    file_Dsp = open(path+"/observables/Dsp.txt" % r,"a", 1)
-    file_Dnn = open(path+"/observables/Dnn.txt" % r,"a", 1)
+    file_Csp = open(path+"/observables/Csp.txt","a", 1)
+    file_Cnn = open(path+"/observables/Cnn.txt","a", 1)
+    file_Dsp = open(path+"/observables/Dsp.txt","a", 1)
+    file_Dnn = open(path+"/observables/Dnn.txt","a", 1)
 
     
     file_EE.write(repr(time) + " " + "  ".join(map(str, EE)) + " " + "\n")
