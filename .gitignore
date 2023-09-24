@@ -3,6 +3,9 @@ data/
 logs/
 mps/
 observables/
+analysis/
+results/
+summaries/
 
 # Dependency directories
 __pycache__/

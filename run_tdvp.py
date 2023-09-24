@@ -229,24 +229,15 @@ if __name__ == "__main__":
     DBHM = model.DIPOLAR_BOSE_HUBBARD(model_params)
 
     # initial state
-    if init_state == '2':
+    if init_state == '1':
+        product_state = ['1'] * DBHM0.lat.N_sites
+    elif init_state == '2':
         product_state = ['2'] * DBHM0.lat.N_sites
-    if init_state == '2+1b':
-        product_state = ['2'] * DBHM0.lat.N_sites
-        product_state[int(DBHM0.lat.N_sites/2)-1] = '3'
-    if init_state == '2+1d':
-        product_state = ['2'] * DBHM0.lat.N_sites
-        product_state[int(DBHM0.lat.N_sites/2)-1] = '3'
-        product_state[int(DBHM0.lat.N_sites/2)] = '1'
-    elif init_state == '1-half':
+    elif init_state == '1-half-a':
         product_state = ['1','2'] * int(DBHM0.lat.N_sites/2)
-    elif init_state == '1-half-2':
+    elif init_state == '1-half-b':
         product_state = ['1','1','2','2'] * int(DBHM0.lat.N_sites/4)
-    elif init_state == '2-half':
-        product_state = ['2','3'] * int(DBHM0.lat.N_sites/2)
-    elif init_state == '2-half-2':
-        product_state = ['2','2','3','3'] * int(DBHM0.lat.N_sites/4)
-
+    
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
 
     tdvp_engine0 = tdvp.TwoSiteTDVPEngine(psi, DBHM0, tdvp_params)
