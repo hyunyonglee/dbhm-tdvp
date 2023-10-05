@@ -246,20 +246,19 @@ if __name__ == "__main__":
     
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
 
-    # TDVP algorithm
-    if method == 'single-site':
-        tdvp_engine0 = tdvp.SingleSiteTDVPEngine(psi, DBHM0, tdvp_params)
-        tdvp_engine = tdvp.SingleSiteTDVPEngine(psi, DBHM, tdvp_params)
-    elif method == 'two-site':
-        tdvp_engine0 = tdvp.TwoSiteTDVPEngine(psi, DBHM0, tdvp_params)
-        tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
-
     # initial short running
+    tdvp_engine0 = tdvp.TwoSiteTDVPEngine(psi, DBHM0, tdvp_params)
     for i in range(5):
         tdvp_engine0.run()
         
     Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
     write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, 0, path )
+
+    # TDVP algorithm
+    if method == 'single-site':
+        tdvp_engine = tdvp.SingleSiteTDVPEngine(psi, DBHM, tdvp_params)
+    elif method == 'two-site':
+        tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
 
     for i in range(Ntot):
         tdvp_engine.run()
