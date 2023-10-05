@@ -183,7 +183,6 @@ if __name__ == "__main__":
     parser.add_argument("--Mstep", default='5', help="Measurement time step")
     parser.add_argument("--dt", default='0.1', help="Delta time")
     parser.add_argument("--init_state", default='2', help="Initial state")
-    parser.add_argument("--method", default='single-site', help="path for saving data")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
     args=parser.parse_args()
 
@@ -197,7 +196,6 @@ if __name__ == "__main__":
     Mstep = int(args.Mstep)
     dt = float(args.dt)
     init_state = args.init_state
-    method = args.method
     path = args.path
     
     model_params0 = {
@@ -254,12 +252,7 @@ if __name__ == "__main__":
     Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
     write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, 0, path )
 
-    # TDVP algorithm
-    if method == 'single-site':
-        tdvp_engine = tdvp.SingleSiteTDVPEngine(psi, DBHM, tdvp_params)
-    elif method == 'two-site':
-        tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
-
+    tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
     for i in range(Ntot):
         tdvp_engine.run()
         if (i+1) % Mstep == 0:
