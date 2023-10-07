@@ -5,8 +5,6 @@ from tenpy.networks.mps import MPS
 import os, os.path
 import argparse
 import logging.config
-import h5py
-from tenpy.tools import hdf5_io
 
 def ensure_dir(f):
     d=os.path.dirname(f)
@@ -178,7 +176,8 @@ if __name__ == "__main__":
     parser.add_argument("--td", default='0.0', help="Dipolar hopping amplitude (after quench)")
     parser.add_argument("--U0", default='1.0', help="On-site Hubbard interaction (before quench)")
     parser.add_argument("--U", default='1.0', help="On-site Hubbard interaction (after quench)")
-    parser.add_argument("--chi", default='64', help="Bond dimension")
+    parser.add_argument("--chi0", default='64', help="Bond dimension (before quench)")
+    parser.add_argument("--chi", default='64', help="Bond dimension (after quench)")
     parser.add_argument("--Ncut", default='4', help="Cut-off boson number")
     parser.add_argument("--Ntot", default='10', help="Total time steps")
     parser.add_argument("--Mstep", default='5', help="Measurement time step")
@@ -190,8 +189,9 @@ if __name__ == "__main__":
     L = int(args.L)
     td0 = float(args.td0)
     td = float(args.td)
-    U = float(args.U)
     U0 = float(args.U0)
+    U = float(args.U)
+    chi0 = int(args.chi0)
     chi = int(args.chi)
     Ncut = int(args.Ncut)
     Ntot = int(args.Ntot)
@@ -220,10 +220,10 @@ if __name__ == "__main__":
         'disable_after': 20
     },
     'trunc_params': {
-        'chi_max': chi,
+        'chi_max': chi0,
         'svd_min': 1.e-9
     },
-    'chi_list': { 0: 10, 5: 20, 10: chi },
+    'chi_list': { 0: 10, 5: 20, 10: chi0 },
     'max_E_err': 1.0e-9,
     'max_S_err': 1.0e-9,
     'max_sweeps': 100,
