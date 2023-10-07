@@ -132,7 +132,7 @@ if __name__ == "__main__":
     # 'mixer': True,  # setting this to True helps to escape local minima
     'mixer' : dmrg.SubspaceExpansion,
     'mixer_params': {
-        'amplitude': 1.e-3,
+        'amplitude': 1.e-4,
         'decay': 2.0,
         'disable_after': 20
     },
@@ -140,11 +140,7 @@ if __name__ == "__main__":
         'chi_max': chi,
         'svd_min': 1.e-9
     },
-    'lanczos_params': {
-            'N_min': 5,
-            'N_max': 20
-    },
-    'chi_list': { 0: 64, 5: 16, 10: 32, 15: 64, 20: chi },
+    'chi_list': { 0: 8, 5: 16, 10: 32, 15: 64, 20: chi },
     'max_E_err': 1.0e-9,
     'max_S_err': 1.0e-9,
     'max_sweeps': 100,
