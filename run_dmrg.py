@@ -34,13 +34,13 @@ def measurements(psi, L):
     return Ns, NNs, Ds, EE
 
 
-def write_data( psi, E, Ns, NNs, Ds, EE, td, U, path ):
+def write_data( psi, E, Ns, NNs, Ds, EE, L, Ncut, td, U, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
 
     data = {"psi": psi}
-    with h5py.File(path+"/mps/psi_td_%.2f_U_%.2f.h5" % (td,U), 'w') as f:
+    with h5py.File(path+"/mps/psi_L_%d_Ncut_%d_td_%.2f_U_%.2f.h5" % (L,Ncut,td,U), 'w') as f:
         hdf5_io.save_to_hdf5(f, data)
 
     file_EE = open(path+"/observables/EE.txt","a", 1)    
@@ -153,4 +153,4 @@ if __name__ == "__main__":
     psi.canonical_form() 
 
     Ns, NNs, Ds, EE = measurements(psi, L)
-    write_data( psi, E, Ns, NNs, Ds, EE, td, U, path )
+    write_data( psi, E, Ns, NNs, Ds, EE, L, Ncut, td, U, path )
