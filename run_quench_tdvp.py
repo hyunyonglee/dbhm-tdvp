@@ -195,8 +195,8 @@ if __name__ == "__main__":
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form() 
 
-    Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-    write_data( psi, Ns, NNs, Ds, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, 0, path )
+    Ns, NNs, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
+    write_data( Ns, NNs, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, 0, path )
 
     ################
     # after quench #
@@ -225,5 +225,5 @@ if __name__ == "__main__":
     for i in range(Ntot):
         tdvp_engine.run()
         if (i+1) % Mstep == 0:
-            Ns, NNs, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-            write_data( psi, Ns, NNs, Csp, Cnn, Dsp, Dnn, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, tdvp_engine.evolved_time, path )
+            Ns, NNs, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
+            write_data( Ns, NNs, Csp_center, Cnn_center, Dsp_center, Dnn_center, EE, tdvp_engine.evolved_time, path )
