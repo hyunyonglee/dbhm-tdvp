@@ -26,10 +26,10 @@ def measurements(psi, L):
     NNs = psi.expectation_value("NN")
     EE = psi.entanglement_entropy()
     
-    return Ns, NNs, Ds, EE
+    return Ns, NNs, EE
 
 
-def write_data( psi, E, Ns, NNs, Ds, EE, L, Ncut, td, U, path ):
+def write_data( psi, E, Ns, NNs, EE, L, Ncut, td, U, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -144,5 +144,5 @@ if __name__ == "__main__":
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form() 
 
-    Ns, NNs, Ds, EE = measurements(psi, L)
-    write_data( psi, E, Ns, NNs, Ds, EE, L, Ncut, td, U, path )
+    Ns, NNs, EE = measurements(psi, L)
+    write_data( psi, E, Ns, NNs, EE, L, Ncut, td, U, path )
