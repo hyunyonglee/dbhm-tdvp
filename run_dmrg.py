@@ -26,11 +26,6 @@ def measurements(psi, L):
     NNs = psi.expectation_value("NN")
     EE = psi.entanglement_entropy()
     
-    # Measuring Dipole Bound State
-    Ds = []
-    for i in range(0,L-1): 
-        Ds.append( np.abs( psi.expectation_value_term([('Bd',i+1),('B',i)]) ) )
-    
     return Ns, NNs, Ds, EE
 
 
@@ -46,21 +41,18 @@ def write_data( psi, E, Ns, NNs, Ds, EE, L, Ncut, td, U, path ):
     file_EE = open(path+"/observables/EE.txt","a", 1)    
     file_Ns = open(path+"/observables/Ns.txt","a", 1)
     file_NNs = open(path+"/observables/NNs.txt","a", 1)
-    file_Ds = open(path+"/observables/Ds.txt","a", 1)
     
     file_EE.write(repr(td) + " " + repr(U) + " " + "  ".join(map(str, EE)) + " " + "\n")
     file_Ns.write(repr(td) + " " + repr(U) + " " + "  ".join(map(str, Ns)) + " " + "\n")
     file_NNs.write(repr(td) + " " + repr(U) + " " + "  ".join(map(str, NNs)) + " " + "\n")
-    file_Ds.write(repr(td) + " " + repr(U) + " " + "  ".join(map(str, Ds)) + " " + "\n")
     
     file_EE.close()
     file_Ns.close()
     file_NNs.close()
-    file_Ds.close()
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(td) + " " + repr(U) + " " + repr(E) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.mean(Ds)) + " " + "\n")
+    file.write(repr(td) + " " + repr(U) + " " + repr(E) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + "\n")
     file.close()
     
 
