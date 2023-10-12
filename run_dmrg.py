@@ -1,7 +1,6 @@
 import numpy as np
 from tenpy.networks.mps import MPS
-from tenpy.algorithms import dmrg
-from tenpy.algorithms import tebd
+from tenpy.algorithms import dmrg, tebd
 from tenpy.tools.process import mkl_set_nthreads
 import argparse
 import logging.config
@@ -85,6 +84,7 @@ if __name__ == "__main__":
     parser.add_argument("--Ncut", default='4', help="Cut-off boson number")
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
+    parser.add_argument("--RM", default=None, help="path for saving data")
     args=parser.parse_args()
 
     L = int(args.L)
@@ -92,6 +92,7 @@ if __name__ == "__main__":
     U = float(args.U)
     chi = int(args.chi)
     Ncut = int(args.Ncut)
+    RM = args.RM
     init_state = args.init_state
     path = args.path
     
@@ -119,6 +120,12 @@ if __name__ == "__main__":
         product_state = ['2','2','3','3'] * int(L/4)
     
     psi = MPS.from_product_state(DBHM.lat.mps_sites(), product_state, bc=DBHM.lat.bc_MPS)
+
+    if RM == 'random':
+        TEBD_params = {'N_steps': 10, 'trunc_params':{'chi_max': 30}, 'verbose': 0}
+        eng = tebd.RandomUnitaryEvolution(psi, TEBD_params)
+        eng.run()
+        psi.canonical_form() 
 
     dmrg_params = {
     # 'mixer': True,  # setting this to True helps to escape local minima
