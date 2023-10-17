@@ -78,5 +78,6 @@ class DIPOLAR_BOSE_HUBBARD_CONSERVED(CouplingModel,MPOModel):
         # onsite Hubbard Interaction
         for x in range(L):
             self.add_onsite( U/2., x, 'NN')
+            self.add_onsite( -U/2., x, 'N')
 
         MPOModel.__init__(self, lat, self.calc_H_MPO())
