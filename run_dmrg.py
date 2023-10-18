@@ -10,8 +10,6 @@ import h5py
 from tenpy.tools import hdf5_io
 import model
 
-mkl_set_nthreads(64)
-
 def ensure_dir(f):
     d=os.path.dirname(f)
     if not os.path.exists(d):
