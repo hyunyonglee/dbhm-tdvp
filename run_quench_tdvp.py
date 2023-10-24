@@ -192,7 +192,7 @@ if __name__ == "__main__":
     psi_d.apply_local_op(i=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False)
     
     Ncor = psi_n.overlap( psi.copy().apply_local_op(i=int(L/2), op='N', unitary=False) )
-    Dcor = psi_n.overlap( psi.copy().apply_local_op(i=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
+    Dcor = psi_d.overlap( psi.copy().apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False).apply_local_op(i=int(L/2), op='B', unitary=False) )
     
     Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
     write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, 0, path )
@@ -232,5 +232,5 @@ if __name__ == "__main__":
         if (i+1) % Mstep == 0:    
             Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
             Ncor = psi_n.overlap( psi.copy().apply_local_op(i=int(L/2), op='N', unitary=False) )
-            Dcor = psi_n.overlap( psi.copy().apply_local_op(i=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
+            Dcor = psi_d.overlap( psi.copy().apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False).apply_local_op(i=int(L/2), op='B', unitary=False) )
             write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, tdvp_engine.evolved_time, path )
