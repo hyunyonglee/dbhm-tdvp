@@ -189,10 +189,18 @@ if __name__ == "__main__":
     psi_n = psi.copy()
     psi_d = psi.copy()
     psi_n.apply_local_op(i=int(L/2), op='N', unitary=False)
-    psi_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False).apply_local_op(i=int(L/2), op='B', unitary=False)
+    psi_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
+    psi_d.apply_local_op(i=int(L/2), op='B', unitary=False)
     
-    Ncor = psi_n.overlap( psi.copy().apply_local_op(i=int(L/2), op='N', unitary=False) )
-    Dcor = psi_d.overlap( psi.copy().apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False).apply_local_op(i=int(L/2), op='B', unitary=False) )
+    psi_T_n = psi.copy()
+    psi_T_d = psi.copy()
+    
+    psi_T_n.apply_local_op(i=int(L/2), op='N', unitary=False)
+    psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
+    psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
+    
+    Ncor = psi_n.overlap( psi_T_n )
+    Dcor = psi_d.overlap( psi_T_d )
     
     Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
     write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, 0, path )
@@ -231,6 +239,14 @@ if __name__ == "__main__":
         
         if (i+1) % Mstep == 0:    
             Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-            Ncor = psi_n.overlap( psi.copy().apply_local_op(i=int(L/2), op='N', unitary=False) )
-            Dcor = psi_d.overlap( psi.copy().apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False).apply_local_op(i=int(L/2), op='B', unitary=False) )
+
+            psi_T_n = psi.copy()
+            psi_T_d = psi.copy()
+            
+            psi_T_n.apply_local_op(i=int(L/2), op='N', unitary=False)
+            psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
+            psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
+
+            Ncor = psi_n.overlap( psi_T_n )
+            Dcor = psi_d.overlap( psi_T_d )
             write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, tdvp_engine.evolved_time, path )
