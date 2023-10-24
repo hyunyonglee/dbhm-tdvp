@@ -45,7 +45,7 @@ def measurements(psi, L):
 
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, F, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -78,7 +78,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, tim
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.mean(Ncor)) + " " + repr(np.mean(Dcor)) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + "\n")
     file.close()
     
 
@@ -184,6 +184,7 @@ if __name__ == "__main__":
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
+    psi0 = psi.copy()
     
     # prepare for autocorrelation functions
     psi_n = psi.copy()
@@ -203,7 +204,7 @@ if __name__ == "__main__":
     Dcor = psi_d.overlap( psi_T_d )
     
     Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-    write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, 0, path )
+    write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, 1., EE, 0, path )
 
     ################
     # after quench #
@@ -249,4 +250,6 @@ if __name__ == "__main__":
 
             Ncor = psi_n.overlap( psi_T_n )
             Dcor = psi_d.overlap( psi_T_d )
-            write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, tdvp_engine.evolved_time, path )
+
+            F = np.abs( psi.overlap(psi0) )**2
+            write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
