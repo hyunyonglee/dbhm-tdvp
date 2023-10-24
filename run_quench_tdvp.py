@@ -189,7 +189,7 @@ if __name__ == "__main__":
     psi_n = psi.copy()
     psi_d = psi.copy()
     psi_n.apply_local_op(i=int(L/2), op='N', unitary=False)
-    psi_d.apply_local_op(i=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False)
+    psi_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False).apply_local_op(i=int(L/2), op='B', unitary=False)
     
     Ncor = psi_n.overlap( psi.copy().apply_local_op(i=int(L/2), op='N', unitary=False) )
     Dcor = psi_d.overlap( psi.copy().apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False).apply_local_op(i=int(L/2), op='B', unitary=False) )
