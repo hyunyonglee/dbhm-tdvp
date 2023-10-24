@@ -45,7 +45,7 @@ def measurements(psi, L):
 
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -78,7 +78,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE, time, path ):
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.mean(Ncor)) + " " + repr(np.mean(Dcor)) + " " + "\n")
     file.close()
     
 
@@ -183,10 +183,19 @@ if __name__ == "__main__":
     # ground state
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
-    psi.canonical_form() 
-
+    psi.canonical_form()
+    
+    # prepare for autocorrelation functions
+    psi_n = psi.copy()
+    psi_d = psi.copy()
+    psi_n.apply_local_op(site=int(L/2), op='N', unitary=False)
+    psi_d.apply_local_op(site=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False)
+    
+    Ncor = psi_n.overlap( psi.copy().apply_local_op(site=int(L/2), op='N', unitary=False) )
+    Dcor = psi_n.overlap( psi.copy().apply_local_op(site=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
+    
     Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-    write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE, 0, path )
+    write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, 0, path )
 
     ################
     # after quench #
@@ -212,8 +221,16 @@ if __name__ == "__main__":
 
     DBHM = model.DIPOLAR_BOSE_HUBBARD_CONSERVED(model_params)    
     tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
+    tdvp_engine_n = tdvp.TwoSiteTDVPEngine(psi_n, DBHM, tdvp_params)
+    tdvp_engine_d = tdvp.TwoSiteTDVPEngine(psi_d, DBHM, tdvp_params)
     for i in range(Ntot):
+        
         tdvp_engine.run()
-        if (i+1) % Mstep == 0:
+        tdvp_engine_n.run()
+        tdvp_engine_d.run()
+        
+        if (i+1) % Mstep == 0:    
             Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-            write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE, tdvp_engine.evolved_time, path )
+            Ncor = psi_n.overlap( psi.copy().apply_local_op(site=int(L/2), op='N', unitary=False) )
+            Dcor = psi_n.overlap( psi.copy().apply_local_op(site=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
+            write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, tdvp_engine.evolved_time, path )
