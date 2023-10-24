@@ -188,11 +188,11 @@ if __name__ == "__main__":
     # prepare for autocorrelation functions
     psi_n = psi.copy()
     psi_d = psi.copy()
-    psi_n.apply_local_op(site=int(L/2), op='N', unitary=False)
-    psi_d.apply_local_op(site=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False)
+    psi_n.apply_local_op(i=int(L/2), op='N', unitary=False)
+    psi_d.apply_local_op(i=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False)
     
-    Ncor = psi_n.overlap( psi.copy().apply_local_op(site=int(L/2), op='N', unitary=False) )
-    Dcor = psi_n.overlap( psi.copy().apply_local_op(site=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
+    Ncor = psi_n.overlap( psi.copy().apply_local_op(i=int(L/2), op='N', unitary=False) )
+    Dcor = psi_n.overlap( psi.copy().apply_local_op(i=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
     
     Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
     write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, 0, path )
@@ -224,13 +224,13 @@ if __name__ == "__main__":
     tdvp_engine_n = tdvp.TwoSiteTDVPEngine(psi_n, DBHM, tdvp_params)
     tdvp_engine_d = tdvp.TwoSiteTDVPEngine(psi_d, DBHM, tdvp_params)
     for i in range(Ntot):
-        
+
         tdvp_engine.run()
         tdvp_engine_n.run()
         tdvp_engine_d.run()
         
         if (i+1) % Mstep == 0:    
             Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-            Ncor = psi_n.overlap( psi.copy().apply_local_op(site=int(L/2), op='N', unitary=False) )
-            Dcor = psi_n.overlap( psi.copy().apply_local_op(site=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
+            Ncor = psi_n.overlap( psi.copy().apply_local_op(i=int(L/2), op='N', unitary=False) )
+            Dcor = psi_n.overlap( psi.copy().apply_local_op(i=[int(L/2)-1,int(L/2)], op=['Bd','B'], unitary=False) )
             write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Ncor, Dcor, EE, tdvp_engine.evolved_time, path )
