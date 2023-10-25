@@ -189,14 +189,14 @@ if __name__ == "__main__":
     # prepare for autocorrelation functions
     psi_b = psi.copy()
     psi_d = psi.copy()
-    psi_b.apply_local_op(i=int(L/2), op='N', unitary=False)
+    psi_b.apply_local_op(i=int(L/2), op='B', unitary=False)
     psi_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
     psi_d.apply_local_op(i=int(L/2), op='B', unitary=False)
     
     psi_T_b = psi.copy()
     psi_T_d = psi.copy()
     
-    psi_T_b.apply_local_op(i=int(L/2), op='N', unitary=False)
+    psi_T_b.apply_local_op(i=int(L/2), op='B', unitary=False)
     psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
     psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
     
@@ -244,7 +244,7 @@ if __name__ == "__main__":
             psi_T_b = psi.copy()
             psi_T_d = psi.copy()
             
-            psi_T_b.apply_local_op(i=int(L/2), op='N', unitary=False)
+            psi_T_b.apply_local_op(i=int(L/2), op='B', unitary=False)
             psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
             psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
 
