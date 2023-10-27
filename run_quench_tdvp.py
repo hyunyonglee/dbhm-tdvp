@@ -237,7 +237,16 @@ if __name__ == "__main__":
         tdvp_engine.run()
         tdvp_engine_b.run()
         tdvp_engine_d.run()
-        
+
+        if np.max(psi.chi) == chi:
+            tdvp_engine = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine)
+
+        if np.max(psi_b.chi) == chi:
+            tdvp_engine_b = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_b)
+
+        if np.max(psi_d.chi) == chi:
+            tdvp_engine_d = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_d)
+
         if (i+1) % Mstep == 0:    
             Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
 
