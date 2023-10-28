@@ -240,13 +240,13 @@ if __name__ == "__main__":
 
         print(psi.chi)
         print(np.mean(psi.chi))
-        if np.mean(psi.chi) > chi*0.95:
+        if np.mean(psi.chi) > chi*0.8:
             tdvp_engine = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine)
 
-        if np.mean(psi_b.chi) > chi*0.95:
+        if np.mean(psi_b.chi) > chi*0.8:
             tdvp_engine_b = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_b)
 
-        if np.mean(psi_d.chi) > chi*0.95:
+        if np.mean(psi_d.chi) > chi*0.8:
             tdvp_engine_d = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_d)
 
         if (i+1) % Mstep == 0:    
