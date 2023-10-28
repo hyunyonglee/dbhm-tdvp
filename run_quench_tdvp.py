@@ -45,7 +45,7 @@ def measurements(psi, L):
 
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Bcor, Dcor, F, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Bcor, Ncor, Dcor, F, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -78,7 +78,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Bcor, Dcor, F, EE, 
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + "\n")
     file.close()
     
 
@@ -188,23 +188,28 @@ if __name__ == "__main__":
     
     # prepare for autocorrelation functions
     psi_b = psi.copy()
+    psi_n = psi.copy()
     psi_d = psi.copy()
     psi_b.apply_local_op(i=int(L/2), op='B', unitary=False)
+    psi_n.apply_local_op(i=int(L/2), op='N', unitary=False)
     psi_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
     psi_d.apply_local_op(i=int(L/2), op='B', unitary=False)
     
     psi_T_b = psi.copy()
+    psi_T_n = psi.copy()
     psi_T_d = psi.copy()
     
     psi_T_b.apply_local_op(i=int(L/2), op='B', unitary=False)
+    psi_T_n.apply_local_op(i=int(L/2), op='N', unitary=False)
     psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
     psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
     
     Bcor = psi_b.overlap( psi_T_b )
+    Ncor = psi_n.overlap( psi_T_n ) - psi_n.expectation_value(ops=['N'],sites=[int(L/2)]) * psi_T_n.expectation_value(ops=['N'],sites=[int(L/2)])
     Dcor = psi_d.overlap( psi_T_d )
     
     Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
-    write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Bcor, Dcor, 1., EE, 0, path )
+    write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Bcor, Ncor, Dcor, 1., EE, 0, path )
 
     ################
     # after quench #
@@ -231,10 +236,12 @@ if __name__ == "__main__":
     DBHM = model.DIPOLAR_BOSE_HUBBARD_CONSERVED(model_params)    
     tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
     tdvp_engine_b = tdvp.TwoSiteTDVPEngine(psi_b, DBHM, tdvp_params)
+    tdvp_engine_n = tdvp.TwoSiteTDVPEngine(psi_n, DBHM, tdvp_params)
     tdvp_engine_d = tdvp.TwoSiteTDVPEngine(psi_d, DBHM, tdvp_params)
 
     tdvp_two_site = True
     tdvp_two_site_b = True
+    tdvp_two_site_n = True
     tdvp_two_site_d = True
 
     for i in range(Ntot):
@@ -251,6 +258,10 @@ if __name__ == "__main__":
             tdvp_engine_b = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_b)
             tdvp_two_site_b = False
 
+        if tdvp_two_site_n and np.mean(psi_n.chi) > chi*0.85:
+            tdvp_engine_n = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_n)
+            tdvp_two_site_n = False
+
         if tdvp_two_site_d and np.mean(psi_d.chi) > chi*0.85:
             tdvp_engine_d = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_d)
             tdvp_two_site_d = False
@@ -259,14 +270,17 @@ if __name__ == "__main__":
             Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
 
             psi_T_b = psi.copy()
+            psi_T_n = psi.copy()
             psi_T_d = psi.copy()
             
             psi_T_b.apply_local_op(i=int(L/2), op='B', unitary=False)
+            psi_T_n.apply_local_op(i=int(L/2), op='N', unitary=False)
             psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
             psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
 
             Bcor = psi_b.overlap( psi_T_b )
+            Ncor = psi_n.overlap( psi_T_n ) - psi_n.expectation_value(ops=['N'],sites=[int(L/2)]) * psi_T_n.expectation_value(ops=['N'],sites=[int(L/2)])
             Dcor = psi_d.overlap( psi_T_d )
 
             F = np.abs( psi.overlap(psi0) )**2
-            write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Bcor, Dcor, F, EE, tdvp_engine.evolved_time, path )
+            write_data( Ns, NNs, Cnn_center, Dsp_center, Dnn_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
