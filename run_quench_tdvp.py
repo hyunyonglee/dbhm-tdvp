@@ -238,13 +238,13 @@ if __name__ == "__main__":
         tdvp_engine_b.run()
         tdvp_engine_d.run()
 
-        if np.max(psi.chi) == chi:
+        if np.mean(psi.chi) == chi*0.95:
             tdvp_engine = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine)
 
-        if np.max(psi_b.chi) == chi:
+        if np.mean(psi_b.chi) == chi*0.95:
             tdvp_engine_b = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_b)
 
-        if np.max(psi_d.chi) == chi:
+        if np.mean(psi_d.chi) == chi*0.95:
             tdvp_engine_d = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_d)
 
         if (i+1) % Mstep == 0:    
