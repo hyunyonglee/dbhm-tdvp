@@ -185,6 +185,7 @@ if __name__ == "__main__":
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
     psi0 = psi.copy()
+    n0 = psi.expectation_value(ops=['N'],sites=[int(L/2)])[0]
     
     # prepare for autocorrelation functions
     psi_b = psi.copy()
@@ -205,7 +206,7 @@ if __name__ == "__main__":
     psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
     
     Bcor = psi_b.overlap( psi_T_b )
-    Ncor = psi_n.overlap( psi_T_n ) - psi_n.expectation_value(ops=['N'],sites=[int(L/2)]) * psi_T_n.expectation_value(ops=['N'],sites=[int(L/2)])
+    Ncor = psi_n.overlap( psi_T_n ) - n0 * n0
     Dcor = psi_d.overlap( psi_T_d )
     
     Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
@@ -279,7 +280,7 @@ if __name__ == "__main__":
             psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
 
             Bcor = psi_b.overlap( psi_T_b )
-            Ncor = psi_n.overlap( psi_T_n ) - psi_n.expectation_value(ops=['N'],sites=[int(L/2)]) * psi_T_n.expectation_value(ops=['N'],sites=[int(L/2)])
+            Ncor = psi_n.overlap( psi_T_n ) - n0 * psi.expectation_value(ops=['N'],sites=[int(L/2)])[0]
             Dcor = psi_d.overlap( psi_T_d )
 
             F = np.abs( psi.overlap(psi0) )**2
