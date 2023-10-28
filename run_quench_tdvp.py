@@ -232,22 +232,28 @@ if __name__ == "__main__":
     tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
     tdvp_engine_b = tdvp.TwoSiteTDVPEngine(psi_b, DBHM, tdvp_params)
     tdvp_engine_d = tdvp.TwoSiteTDVPEngine(psi_d, DBHM, tdvp_params)
+
+    tdvp_two_site = True
+    tdvp_two_site_b = True
+    tdvp_two_site_d = True
+
     for i in range(Ntot):
 
         tdvp_engine.run()
         tdvp_engine_b.run()
         tdvp_engine_d.run()
 
-        print(psi.chi)
-        print(np.mean(psi.chi))
-        # if np.mean(psi.chi) > chi*0.8:
-        #     tdvp_engine = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine)
+        if tdvp_two_site and np.mean(psi.chi) > chi*0.85:
+            tdvp_engine = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine)
+            tdvp_two_site = False
 
-        if np.mean(psi_b.chi) > chi*0.8:
+        if tdvp_two_site_b and np.mean(psi_b.chi) > chi*0.85:
             tdvp_engine_b = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_b)
+            tdvp_two_site_b = False
 
-        if np.mean(psi_d.chi) > chi*0.8:
+        if tdvp_two_site_d and np.mean(psi_d.chi) > chi*0.85:
             tdvp_engine_d = tdvp.SingleSiteTDVPEngine.switch_engine(tdvp_engine_d)
+            tdvp_two_site_d = False
 
         if (i+1) % Mstep == 0:    
             Ns, NNs, Cnn_center, Dsp_center, Dnn_center, EE = measurements(psi, L)
