@@ -107,7 +107,7 @@ if __name__ == "__main__":
     parser.add_argument("--Ncut", default='4', help="Cut-off boson number")
     parser.add_argument("--Ntot", default='10', help="Total time steps")
     parser.add_argument("--Mstep", default='5', help="Measurement time step")
-    parser.add_argument("--PSIstep", default='1000', help="Wavefunction save time step")
+    parser.add_argument("--Pstep", default='1000', help="Wavefunction save time step")
     parser.add_argument("--dt", default='0.1', help="Delta time")
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     Ncut = int(args.Ncut)
     Ntot = int(args.Ntot)
     Mstep = int(args.Mstep)
-    PSIstep = int(args.PSIstep)
+    Pstep = int(args.Pstep)
     dt = float(args.dt)
     init_state = args.init_state
     path = args.path
@@ -293,7 +293,7 @@ if __name__ == "__main__":
             F = psi.overlap(psi0)
             write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
 
-        if (i+1) % PSIstep == 0:
+        if (i+1) % Pstep == 0:
             
             data = {"psi": psi}
             with h5py.File(path+"/mps/psi_time_%.3f.h5" % tdvp_engine.evolved_time, 'w') as f:
