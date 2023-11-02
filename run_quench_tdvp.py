@@ -56,6 +56,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, time, 
     file_Cnn = open(path+"/observables/Cnn.txt","a", 1)
     file_Dsp = open(path+"/observables/Dsp.txt","a", 1)
 
+
     file_EE.write(repr(time) + " " + "  ".join(map(str, EE)) + " " + "\n")
     file_Ns.write(repr(time) + " " + "  ".join(map(str, Ns)) + " " + "\n")
     file_NNs.write(repr(time) + " " + "  ".join(map(str, NNs)) + " " + "\n")
@@ -70,7 +71,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, time, 
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(np.abs(F)) + " " + repr(F.real) + " " + repr(F.imag) + " " + "\n")
     file.close()
     
 
@@ -106,6 +107,7 @@ if __name__ == "__main__":
     parser.add_argument("--Ncut", default='4', help="Cut-off boson number")
     parser.add_argument("--Ntot", default='10', help="Total time steps")
     parser.add_argument("--Mstep", default='5', help="Measurement time step")
+    parser.add_argument("--PSIstep", default='1000', help="Wavefunction save time step")
     parser.add_argument("--dt", default='0.1', help="Delta time")
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
@@ -122,6 +124,7 @@ if __name__ == "__main__":
     Ncut = int(args.Ncut)
     Ntot = int(args.Ntot)
     Mstep = int(args.Mstep)
+    PSIstep = int(args.PSIstep)
     dt = float(args.dt)
     init_state = args.init_state
     path = args.path
@@ -185,19 +188,19 @@ if __name__ == "__main__":
         psi_n = psi.copy()
         psi_d = psi.copy()
 
-        psi_b.apply_local_op(i=int(L/2), op='B', unitary=False)
-        psi_n.apply_local_op(i=int(L/2), op='N', unitary=False)
-        psi_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
-        psi_d.apply_local_op(i=int(L/2), op='B', unitary=False)
+        psi_b.apply_local_op(i=int(L/2), op='B')#, unitary=False)
+        psi_n.apply_local_op(i=int(L/2), op='N')#, unitary=False)
+        psi_d.apply_local_op(i=(int(L/2)-1), op='Bd')#, unitary=False)
+        psi_d.apply_local_op(i=int(L/2), op='B')#, unitary=False)
     
         psi_T_b = psi.copy()
         psi_T_n = psi.copy()
         psi_T_d = psi.copy()
     
-        psi_T_b.apply_local_op(i=int(L/2), op='B', unitary=False)
-        psi_T_n.apply_local_op(i=int(L/2), op='N', unitary=False)
-        psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
-        psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
+        psi_T_b.apply_local_op(i=int(L/2), op='B')#, unitary=False)
+        psi_T_n.apply_local_op(i=int(L/2), op='N')#, unitary=False)
+        psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd')#, unitary=False)
+        psi_T_d.apply_local_op(i=int(L/2), op='B')#, unitary=False)
     
         Bcor = psi_b.overlap( psi_T_b )
         Ncor = psi_n.overlap( psi_T_n )
@@ -237,7 +240,6 @@ if __name__ == "__main__":
     tdvp_two_site = True
     
     if args.autocorr:
-        
         tdvp_engine_b = tdvp.TwoSiteTDVPEngine(psi_b, DBHM, tdvp_params)
         tdvp_engine_n = tdvp.TwoSiteTDVPEngine(psi_n, DBHM, tdvp_params)
         tdvp_engine_d = tdvp.TwoSiteTDVPEngine(psi_d, DBHM, tdvp_params)
@@ -255,7 +257,6 @@ if __name__ == "__main__":
 
         
         if args.autocorr:
-
             tdvp_engine_b.run()
             tdvp_engine_n.run()
             tdvp_engine_d.run()
@@ -280,14 +281,20 @@ if __name__ == "__main__":
                 psi_T_n = psi.copy()
                 psi_T_d = psi.copy()
             
-                psi_T_b.apply_local_op(i=int(L/2), op='B', unitary=False)
-                psi_T_n.apply_local_op(i=int(L/2), op='N', unitary=False)
-                psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd', unitary=False)
-                psi_T_d.apply_local_op(i=int(L/2), op='B', unitary=False)
+                psi_T_b.apply_local_op(i=int(L/2), op='B')#, unitary=False)
+                psi_T_n.apply_local_op(i=int(L/2), op='N')#, unitary=False)
+                psi_T_d.apply_local_op(i=(int(L/2)-1), op='Bd')#, unitary=False)
+                psi_T_d.apply_local_op(i=int(L/2), op='B')#, unitary=False)
 
                 Bcor = psi_b.overlap( psi_T_b )
                 Ncor = psi_n.overlap( psi_T_n )
                 Dcor = psi_d.overlap( psi_T_d )
 
-            F = np.abs( psi.overlap(psi0) )**2
+            F = psi.overlap(psi0)
             write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
+
+        if (i+1) % PSIstep == 0:
+            
+            data = {"psi": psi}
+            with h5py.File(path+"/mps/psi_time_%.3f.h5" % tdvp_engine.evolved_time, 'w') as f:
+                hdf5_io.save_to_hdf5(f, data)
