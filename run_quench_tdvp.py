@@ -45,7 +45,7 @@ def measurements(psi, L):
 def dc_corr_func(psi, L, time, path):
     
     # Measuring Correlation functions from the center
-    Dsp_corr = np.zeros((L-1,L-1))
+    Dsp_corr = np.zeros((L-1,L-1), dtype=complex)
     
     for i in range(0,L-1):
         for j in range(0,L-1):
@@ -58,7 +58,7 @@ def dc_corr_func(psi, L, time, path):
     # write real part of correlation function
     for i in range(0,L-1):
         file_Dsp_corr1.write("  ".join(map(str, Dsp_corr[i,:].real)) + " " + "\n")
-        file_Dsp_corr1.write("  ".join(map(str, Dsp_corr[i,:].imag)) + " " + "\n")
+        file_Dsp_corr2.write("  ".join(map(str, Dsp_corr[i,:].imag)) + " " + "\n")
     file_Dsp_corr1.close()
     file_Dsp_corr2.close()
 
