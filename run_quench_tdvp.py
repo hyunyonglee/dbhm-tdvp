@@ -42,6 +42,24 @@ def measurements(psi, L):
     return Ns, NNs, Cnn_center, Dsp_center, EE
 
 
+def dc_corr_func(psi, L, time, path):
+    
+    # Measuring Correlation functions from the center
+    Dsp_corr = np.zeros((L-1,L-1))
+    
+    for i in range(0,L-1):
+        for j in range(0,L-1):
+            Dsp_corr[i,j] = psi.expectation_value_term([('Bd',i),('B',i+1),('B',j),('Bd',j+1)])
+    
+    ensure_dir(path+"/observables/")
+    file_Dsp_corr = open(path+"/observables/Dsp_corr_time_%.3f.txt" % time,"a", 1)
+    for i in range(0,L-1):
+        file_Dsp_corr.write("  ".join(map(str, Dsp_corr[i,:])) + " " + "\n")
+    file_Dsp_corr.close()
+
+
+
+
 
 def write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, time, path ):
 
@@ -114,6 +132,7 @@ if __name__ == "__main__":
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
     parser.add_argument('--autocorr', action='store_true', help='enable autocorrelation function calculation')
+    parser.add_argument('--corr_func', action='store_true', help='enable correlation function calculation')
     args = parser.parse_args()
 
     L = int(args.L)
@@ -294,6 +313,9 @@ if __name__ == "__main__":
 
             F = psi.overlap(psi0)
             write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
+            
+            if args.corr_func:
+                dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
 
         if (i+1) % Pstep == 0:
             
