@@ -52,13 +52,15 @@ def dc_corr_func(psi, L, time, path):
             Dsp_corr[i,j] = psi.expectation_value_term([('Bd',i),('B',i+1),('B',j),('Bd',j+1)])
     
     ensure_dir(path+"/observables/")
-    file_Dsp_corr = open(path+"/observables/Dsp_corr_time_%.3f.txt" % time,"a", 1)
+    file_Dsp_corr1 = open(path+"/observables/Dsp_corr_real_t_%.3f.txt" % time,"a", 1)
+    file_Dsp_corr2 = open(path+"/observables/Dsp_corr_imag_t_%.3f.txt" % time,"a", 1)
+    
+    # write real part of correlation function
     for i in range(0,L-1):
-        file_Dsp_corr.write("  ".join(map(str, Dsp_corr[i,:])) + " " + "\n")
-    file_Dsp_corr.close()
-
-
-
+        file_Dsp_corr1.write("  ".join(map(str, Dsp_corr[i,:].real)) + " " + "\n")
+        file_Dsp_corr1.write("  ".join(map(str, Dsp_corr[i,:].imag)) + " " + "\n")
+    file_Dsp_corr1.close()
+    file_Dsp_corr2.close()
 
 
 def write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, time, path ):
