@@ -36,7 +36,7 @@ def measurements(psi, L):
         Cnn_center[i] = C.real
         
         if i<L-1:
-            D = psi.expectation_value_term([('Bd',I),('B',I+1),('B',J),('Bd',J+1)])
+            D = psi.expectation_value_term([('Bd',I),('B',I+1),('Bd',J+1),('B',J)])
             Dsp_center[i] = D.real
             
     return Ns, NNs, Cnn_center, Dsp_center, EE
@@ -49,7 +49,7 @@ def dc_corr_func(psi, L, time, path):
     
     for i in range(0,L-1):
         for j in range(0,L-1):
-            Dsp_corr[i,j] = psi.expectation_value_term([('Bd',i),('B',i+1),('B',j),('Bd',j+1)])
+            Dsp_corr[i,j] = psi.expectation_value_term([('Bd',i),('B',i+1),('Bd',j+1),('B',j)])
     
     ensure_dir(path+"/observables/")
     file_Dsp_corr1 = open(path+"/observables/Dsp_corr_real_t_%.3f.txt" % time,"a", 1)
