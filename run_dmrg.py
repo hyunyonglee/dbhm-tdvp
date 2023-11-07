@@ -22,11 +22,18 @@ def measurements(psi, L):
     Ns = psi.expectation_value("N")
     NNs = psi.expectation_value("NN")
     EE = psi.entanglement_entropy()
+
+    # Measuring Correlation functions from the center
+    Dsp_corr = np.zeros((L-1,L-1), dtype=complex)
     
-    return Ns, NNs, EE
+    for i in range(0,L-1):
+        for j in range(0,L-1):
+            Dsp_corr[i,j] = psi.expectation_value_term([('Bd',i),('B',i+1),('Bd',j+1),('B',j)])
+    
+    return Ns, NNs, EE, Dsp_corr
 
 
-def write_data( psi, E, Ns, NNs, EE, L, Ncut, td, U, path ):
+def write_data( psi, E, Ns, NNs, EE, Dsp_corr, L, Ncut, td, U, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -51,6 +58,18 @@ def write_data( psi, E, Ns, NNs, EE, L, Ncut, td, U, path ):
     file = open(path+"/observables.txt","a", 1)    
     file.write(repr(td) + " " + repr(U) + " " + repr(E) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + "\n")
     file.close()
+
+    file_Dsp_corr1 = open(path+"/observables/Dsp_corr_real_t_%.3f.txt" % time,"a", 1)
+    file_Dsp_corr2 = open(path+"/observables/Dsp_corr_imag_t_%.3f.txt" % time,"a", 1)
+    
+    # write real part of correlation function
+    for i in range(0,L-1):
+        file_Dsp_corr1.write("  ".join(map(str, Dsp_corr[i,:].real)) + " " + "\n")
+        file_Dsp_corr2.write("  ".join(map(str, Dsp_corr[i,:].imag)) + " " + "\n")
+    file_Dsp_corr1.close()
+    file_Dsp_corr2.close()
+    
+    
     
 
 if __name__ == "__main__":
@@ -149,5 +168,5 @@ if __name__ == "__main__":
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form() 
 
-    Ns, NNs, EE = measurements(psi, L)
-    write_data( psi, E, Ns, NNs, EE, L, Ncut, td, U, path )
+    Ns, NNs, EE, Dsp_corr = measurements(psi, L)
+    write_data( psi, E, Ns, NNs, EE, Dsp_corr, L, Ncut, td, U, path )
