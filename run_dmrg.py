@@ -59,8 +59,8 @@ def write_data( psi, E, Ns, NNs, EE, Dsp_corr, L, Ncut, td, U, path ):
     file.write(repr(td) + " " + repr(U) + " " + repr(E) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + "\n")
     file.close()
 
-    file_Dsp_corr1 = open(path+"/observables/Dsp_corr_real_t_%.3f.txt" % time,"a", 1)
-    file_Dsp_corr2 = open(path+"/observables/Dsp_corr_imag_t_%.3f.txt" % time,"a", 1)
+    file_Dsp_corr1 = open(path+"/observables/Dsp_corr_real_U_%.2f.txt" % U,"a", 1)
+    file_Dsp_corr2 = open(path+"/observables/Dsp_corr_imag_U_%.2f.txt" % U,"a", 1)
     
     # write real part of correlation function
     for i in range(0,L-1):
