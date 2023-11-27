@@ -102,6 +102,7 @@ if __name__ == "__main__":
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
     parser.add_argument("--RM", default=None, help="path for saving data")
+    parser.add_argument("--max_sweep", default='50', help="Maximum number of sweeps")
     args=parser.parse_args()
 
     L = int(args.L)
@@ -112,6 +113,7 @@ if __name__ == "__main__":
     RM = args.RM
     init_state = args.init_state
     path = args.path
+    max_sweep = int(args.max_sweep)
     
     model_params = {
     "L": L, 
@@ -159,7 +161,7 @@ if __name__ == "__main__":
     'chi_list': { 0: 8, 5: 16, 10: 32, 15: 64, 20: chi },
     'max_E_err': 1.0e-9,
     'max_S_err': 1.0e-9,
-    'max_sweeps': 300,
+    'max_sweeps': max_sweep,
     'combine' : True
     }
 
