@@ -130,9 +130,15 @@ if __name__ == "__main__":
     elif init_state == '2':
         product_state = ['2'] * L
     elif init_state == '1-half-a':
-        product_state = ['1','2'] * int(L/2)
+        if L % 2 == 0:
+            raise ValueError("Length must be odd.")
+        else:
+            product_state = ['1', '2'] * (L // 2) + ['1']
     elif init_state == '1-half-b':
-        product_state = ['1','1','2','2'] * int(L/4)
+        if L % 4 != 0:
+            raise ValueError("Length must be multiples of 4.")
+        else:
+            product_state = ['1', '2', '2', '1'] * (L // 4)
     elif init_state == '2-half-a':
         product_state = ['2','3'] * int(L/2)
     elif init_state == '2-half-b':
