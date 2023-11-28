@@ -135,10 +135,10 @@ if __name__ == "__main__":
         else:
             product_state = ['1', '2'] * (L // 2) + ['1']
     elif init_state == '1-half-b':
-        if L % 4 != 0:
-            raise ValueError("Length must be multiples of 4.")
+        if L % 4 != 2:
+            raise ValueError("Length must be 4n+2.")
         else:
-            product_state = ['1', '2', '2', '1'] * (L // 4)
+            product_state = ['1', '1', '2', '2'] * (L // 4) + ['1','1']
     elif init_state == '2-half-a':
         product_state = ['2','3'] * int(L/2)
     elif init_state == '2-half-b':
