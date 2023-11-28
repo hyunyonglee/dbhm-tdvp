@@ -32,7 +32,7 @@ def measurements(psi, L):
         if L%2 == 0:
             J = int(L/2)-1
         else:
-            J = int((L+1)/2)
+            J = int(L/2)
         
         C = psi.expectation_value_term([('N',I),('N',J)])
         C = C - psi.expectation_value_term([('N',I)]) * psi.expectation_value_term([('N',J)])
