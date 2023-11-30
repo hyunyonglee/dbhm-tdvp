@@ -16,7 +16,7 @@ def ensure_dir(f):
 
 
 
-def measurements(psi, L):
+def measurements(psi, L, Qsp=False):
     
     # Measurements
     Ns = psi.expectation_value("N")
@@ -26,6 +26,7 @@ def measurements(psi, L):
     # Measuring Correlation functions from the center
     Cnn_center = np.zeros(L)
     Dsp_center = np.zeros(L-1)
+    Qsp_center = np.zeros(L-2)
     
     for i in range(0,L):
         I = i
@@ -41,8 +42,13 @@ def measurements(psi, L):
         if i<L-1:
             D = psi.expectation_value_term([('Bd',I),('B',I+1),('Bd',J+1),('B',J)])
             Dsp_center[i] = D.real
-            
-    return Ns, NNs, Cnn_center, Dsp_center, EE
+
+        if Qsp and i<L-2:
+            Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('Bd',J),('B',J+1),('B',J+1),('Bd',J+2)])
+            Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)])
+            Qsp_center[i] = Q.real
+        
+    return Ns, NNs, Cnn_center, Dsp_center, Qsp_center, EE
 
 
 def dc_corr_func(psi, L, time, path):
@@ -66,7 +72,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center, Qsp_center, Bcor, Ncor, Dcor, F, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -80,6 +86,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, time, 
     file_NNs = open(path+"/observables/NNs.txt","a", 1)
     file_Cnn = open(path+"/observables/Cnn.txt","a", 1)
     file_Dsp = open(path+"/observables/Dsp.txt","a", 1)
+    file_Qsp = open(path+"/observables/Qsp.txt","a", 1)
 
 
     file_EE.write(repr(time) + " " + "  ".join(map(str, EE)) + " " + "\n")
@@ -87,12 +94,14 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, time, 
     file_NNs.write(repr(time) + " " + "  ".join(map(str, NNs)) + " " + "\n")
     file_Cnn.write(repr(time) + " " + "  ".join(map(str, Cnn_center)) + " " + "\n")
     file_Dsp.write(repr(time) + " " + "  ".join(map(str, Dsp_center)) + " " + "\n")
+    file_Qsp.write(repr(time) + " " + "  ".join(map(str, Qsp_center)) + " " + "\n")
     
     file_EE.close()
     file_Ns.close()
     file_NNs.close()
     file_Cnn.close()
     file_Dsp.close()
+    file_Qsp.close()
     
     #
     file = open(path+"/observables.txt","a", 1)    
@@ -137,7 +146,8 @@ if __name__ == "__main__":
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
     parser.add_argument('--autocorr', action='store_true', help='enable autocorrelation function calculation')
-    parser.add_argument('--corr_func', action='store_true', help='enable correlation function calculation')
+    parser.add_argument('--d_corr_func', action='store_true', help='enable dipole correlation function calculation')
+    parser.add_argument('--q_corr_func', action='store_true', help='enable quadrupole correlation function calculation')
     args = parser.parse_args()
 
     L = int(args.L)
@@ -242,8 +252,8 @@ if __name__ == "__main__":
         Ncor = 0.
         Dcor = 0.
     
-    Ns, NNs, Cnn_center, Dsp_center, EE = measurements(psi, L)
-    write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, 1., EE, 0, path )
+    Ns, NNs, Cnn_center, Dsp_center, Qsp_center, EE = measurements(psi, L, args.q_corr_func)
+    write_data( Ns, NNs, Cnn_center, Dsp_center, Qsp_center, Bcor, Ncor, Dcor, 1., EE, 0, path )
 
     ################
     # after quench #
@@ -306,7 +316,7 @@ if __name__ == "__main__":
                 tdvp_two_site_d = False
 
         if (i+1) % Mstep == 0:    
-            Ns, NNs, Cnn_center, Dsp_center, EE = measurements(psi, L)
+            Ns, NNs, Cnn_center, Dsp_center, Qsp_center, EE = measurements(psi, L, args.q_corr_func)
 
             if args.autocorr:
                 psi_T_b = psi.copy()
@@ -323,9 +333,9 @@ if __name__ == "__main__":
                 Dcor = psi_d.overlap( psi_T_d )
 
             F = psi.overlap(psi0)
-            write_data( Ns, NNs, Cnn_center, Dsp_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
+            write_data( Ns, NNs, Cnn_center, Dsp_center, Qsp_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
             
-            if args.corr_func:
+            if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
 
         if (i+1) % Pstep == 0:
