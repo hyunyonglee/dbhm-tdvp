@@ -45,7 +45,7 @@ def measurements(psi, L, Qsp=False):
 
         if Qsp and i<L-2:
             Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('Bd',J),('B',J+1),('B',J+1),('Bd',J+2)])
-            Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)])
+            Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('Bd',J),('B',J+1),('B',J+1),('Bd',J+2)])
             Qsp_center[i] = Q.real
         
     return Ns, NNs, Cnn_center, Dsp_center, Qsp_center, EE
