@@ -44,10 +44,8 @@ def measurements(psi, L, Qsp=False):
             Dsp_center[i] = D.real
 
         if Qsp and i<L-3:
-            # Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
-            # Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
-            Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+2),('Bd',I+3),('B',J+3),('Bd',J+2),('Bd',J+1),('B',J)])
-            Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+2),('Bd',I+3)]) * psi.expectation_value_term([('B',J+3),('Bd',J+2),('Bd',J+1),('B',J)])
+            Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
+            Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
             Qsp_center[i] = Q.real
         
     return Ns, NNs, Cnn_center, Dsp_center, Qsp_center, EE
