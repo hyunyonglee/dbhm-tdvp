@@ -134,6 +134,10 @@ if __name__ == "__main__":
             raise ValueError("Length must be odd.")
         else:
             product_state = ['1', '2'] * (L // 2) + ['1']
+            mid_start = (L - 7) // 2
+            mid_end = mid_start + 7
+            product_state[mid_start:mid_end] = ['1', '1', '2', '2', '2', '1', '1']
+            print(product_state)
     elif init_state == '1-half-b':
         if L % 4 != 2:
             raise ValueError("Length must be 4n+2.")
