@@ -134,6 +134,11 @@ if __name__ == "__main__":
             raise ValueError("Length must be odd.")
         else:
             product_state = ['1', '2'] * (L // 2) + ['1']
+    elif init_state == '1-half-a-variant':
+        if L % 2 == 0:
+            raise ValueError("Length must be odd.")
+        else:
+            product_state = ['1', '2'] * (L // 2) + ['1']
             mid_start = (L-1 - 7) // 2
             mid_end = mid_start + 7
             product_state[mid_start:mid_end] = ['1', '1', '2', '2', '2', '1', '1']
