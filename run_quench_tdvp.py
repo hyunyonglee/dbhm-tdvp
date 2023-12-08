@@ -210,10 +210,8 @@ if __name__ == "__main__":
             raise ValueError("Length must be 4n+2.")
         else:
             product_state = ['1', '1', '2', '2'] * (L // 4) + ['1','1']
-    elif init_state == '2-half-a':
-        product_state = ['2','3'] * int(L/2)
-    elif init_state == '2-half-b':
-        product_state = ['2','2','3','3'] * int(L/4)
+    elif init_state == '3':
+        product_state = ['3'] * L
     
     DBHM0 = model.DIPOLAR_BOSE_HUBBARD_CONSERVED(model_params0)
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
