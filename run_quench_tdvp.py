@@ -212,6 +212,10 @@ if __name__ == "__main__":
             product_state = ['1', '1', '2', '2'] * (L // 4) + ['1','1']
     elif init_state == '3':
         product_state = ['3'] * L
+    elif init_state == '4':
+        product_state = ['4'] * L
+    elif init_state == '5':
+        product_state = ['5'] * L
     
     DBHM0 = model.DIPOLAR_BOSE_HUBBARD_CONSERVED(model_params0)
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
