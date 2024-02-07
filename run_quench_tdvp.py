@@ -25,6 +25,7 @@ def measurements(psi, L, Qsp=False):
     
     # Measuring Correlation functions from the center
     Cnn_center = np.zeros(L)
+    Density_center = np.zeros(L-1)
     Dsp_center1 = np.zeros(L-1)
     Dsp_center2 = np.zeros(L-1)
     
@@ -43,6 +44,11 @@ def measurements(psi, L, Qsp=False):
         Cnn_center[i] = C.real
         
         if i<L-1:
+            DensityC = psi.expectation_value_term([('N',I),('N',I+1),('N',J),('N',J+1)])
+            DensityC = DensityC - psi.expectation_value_term([('N',I),('N',I+1)]) * psi.expectation_value_term([('N',J),('N',J+1)])
+            Density_center[i] = DensityC.real
+        
+        if i<L-1:
             D = psi.expectation_value_term([('Bd',I),('B',I+1),('Bd',J),('B',J-1)])
             Dsp_center1[i] = D.real
             D = psi.expectation_value_term([('Bd',I),('B',I+1),('Bd',J+1),('B',J)])
@@ -57,7 +63,7 @@ def measurements(psi, L, Qsp=False):
             Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
             Qsp_center2[i] = Q.real
         
-    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE
+    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, EE
 
 
 def dc_corr_func(psi, L, time, path):
@@ -81,7 +87,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, F, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -94,16 +100,17 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_
     file_Ns = open(path+"/observables/Ns.txt","a", 1)
     file_NNs = open(path+"/observables/NNs.txt","a", 1)
     file_Cnn = open(path+"/observables/Cnn.txt","a", 1)
+    file_Density = open(path+"/observables/DensityDensity.txt","a", 1)
     file_Dsp1 = open(path+"/observables/Dsp1.txt","a", 1)
     file_Dsp2 = open(path+"/observables/Dsp2.txt","a", 1)
     file_Qsp1 = open(path+"/observables/Qsp1.txt","a", 1)
     file_Qsp2 = open(path+"/observables/Qsp2.txt","a", 1)
 
-
     file_EE.write(repr(time) + " " + "  ".join(map(str, EE)) + " " + "\n")
     file_Ns.write(repr(time) + " " + "  ".join(map(str, Ns)) + " " + "\n")
     file_NNs.write(repr(time) + " " + "  ".join(map(str, NNs)) + " " + "\n")
     file_Cnn.write(repr(time) + " " + "  ".join(map(str, Cnn_center)) + " " + "\n")
+    file_Density.write(repr(time) + " " + "  ".join(map(str, Density_center)) + " " + "\n")
     file_Dsp1.write(repr(time) + " " + "  ".join(map(str, Dsp_center1)) + " " + "\n")
     file_Dsp2.write(repr(time) + " " + "  ".join(map(str, Dsp_center2)) + " " + "\n")
     file_Qsp1.write(repr(time) + " " + "  ".join(map(str, Qsp_center1)) + " " + "\n")
@@ -113,6 +120,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_
     file_Ns.close()
     file_NNs.close()
     file_Cnn.close()
+    file_Density.close()
     file_Dsp1.close()
     file_Dsp2.close()
     file_Qsp1.close()
@@ -269,8 +277,8 @@ if __name__ == "__main__":
         Ncor = 0.
         Dcor = 0.
     
-    Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE = measurements(psi, L, args.q_corr_func)
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, 1., EE, 0, path )
+    Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, EE = measurements(psi, L, args.q_corr_func)
+    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, 1., EE, 0, path )
 
     ################
     # after quench #
@@ -333,7 +341,7 @@ if __name__ == "__main__":
                 tdvp_two_site_d = False
 
         if (i+1) % Mstep == 0:    
-            Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE = measurements(psi, L, args.q_corr_func)
+            Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, EE = measurements(psi, L, args.q_corr_func)
 
             if args.autocorr:
                 psi_T_b = psi.copy()
@@ -350,7 +358,7 @@ if __name__ == "__main__":
                 Dcor = psi_d.overlap( psi_T_d )
 
             F = psi.overlap(psi0)
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
             
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
