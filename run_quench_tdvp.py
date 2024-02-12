@@ -14,7 +14,27 @@ def ensure_dir(f):
         os.makedirs(d)
     return d
 
-
+def flip_array(array):
+    # 배열의 길이
+    length = len(array)
+    # 1/3 지점과 2/3 지점 계산
+    I = length // 3
+    J = 2 * I
+    
+    # 1/3 지점에서 요소 뒤집기
+    if array[I:I+2] == ['2', '1']:
+        array[I:I+2] = ['1', '2']
+        if array[J:J+2] == ['1', '2']:
+            array[J:J+2] = ['2', '1']
+        else:
+            array[(J-1):J+1] = ['2', '1']
+    else:
+        array[I:I+2] = ['2', '1']
+        if array[J:J+2] == ['2', '1']:
+            array[J:J+2] = ['1', '2']
+        else:
+            array[(J-1):J+1] = ['1', '2']
+    return array
 
 def measurements(psi, L, Qsp=False):
     
@@ -87,7 +107,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, F, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, F, F1, F2, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -128,7 +148,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(np.abs(F)) + " " + repr(F.real) + " " + repr(F.imag) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(np.abs(F)) + " " + repr(F.real) + " " + repr(F.imag) + " " + repr(np.abs(F1)) + " " + repr(np.abs(F2)) + " " + "\n")
     file.close()
     
 
@@ -243,6 +263,9 @@ if __name__ == "__main__":
     DBHM0 = model.DIPOLAR_BOSE_HUBBARD_CONSERVED(model_params0)
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
 
+    product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
+    product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
+
     # ground state
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
@@ -278,7 +301,9 @@ if __name__ == "__main__":
         Dcor = 0.
     
     Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, EE = measurements(psi, L, args.q_corr_func)
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, 1., EE, 0, path )
+    F1 = psi.overlap(product_state1)
+    F2 = psi.overlap(product_state2)        
+    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, 1., F1, F2, EE, 0, path )
 
     ################
     # after quench #
@@ -358,7 +383,9 @@ if __name__ == "__main__":
                 Dcor = psi_d.overlap( psi_T_d )
 
             F = psi.overlap(psi0)
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, F, EE, tdvp_engine.evolved_time, path )
+            F1 = psi.overlap(product_state1)
+            F2 = psi.overlap(product_state2)
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, Bcor, Ncor, Dcor, F, F1, F2, EE, tdvp_engine.evolved_time, path )
             
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
