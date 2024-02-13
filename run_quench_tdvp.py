@@ -265,20 +265,24 @@ if __name__ == "__main__":
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
 
     product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
-    print(product_state)
     product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
-    print(product_state)
-    print(product_state2)
     
     # ground state
-    dmrg_params['orthogonal_to'] = [product_state1]
-    eng = dmrg.TwoSiteDMRGEngine(product_state2, DBHM0, dmrg_params)
+    # dmrg_params['orthogonal_to'] = [product_state1]
+    # eng = dmrg.TwoSiteDMRGEngine(product_state2, DBHM0, dmrg_params)
     
-    # eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
+    eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
     psi0 = psi.copy()
-    
+
+    dmrg_params['orthogonal_to'] = [psi]
+    psi1 = psi.copy()  # MPS.from_product_state(M.lat.mps_sites(), product_state, bc=M.lat.bc_MPS)
+    eng1 = dmrg.TwoSiteDMRGEngine(psi1, M, dmrg_params)
+    E1, psi1 = eng1.run()
+    psi = psi1.copy()
+    psi0 = psi.copy()
+
     if args.autocorr:
         # prepare for autocorrelation functions
         psi_b = psi.copy()
