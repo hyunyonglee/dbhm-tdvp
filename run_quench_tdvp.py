@@ -18,7 +18,7 @@ def flip_array(array):
     # 배열의 길이
     length = len(array)
     # 1/3 지점과 2/3 지점 계산
-    I = length // 3
+    I = int(length // 3)
     J = 2 * I
     
     # 1/3 지점에서 요소 뒤집기
