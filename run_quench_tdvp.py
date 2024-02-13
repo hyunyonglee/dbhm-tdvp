@@ -218,7 +218,7 @@ if __name__ == "__main__":
     "td": td0,
     "U": U0,
     "Ncut": Ncut,
-    "mu": -100
+    "mu": 100
     }
 
     # dmrg parameters
