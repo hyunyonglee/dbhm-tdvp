@@ -217,7 +217,7 @@ if __name__ == "__main__":
     "L": L, 
     "td": td0,
     "U": U0,
-    "Ncut": Ncut
+    "Ncut": Ncut,
     "mu": -100
     }
 
