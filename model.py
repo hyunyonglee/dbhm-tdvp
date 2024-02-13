@@ -57,6 +57,7 @@ class DIPOLAR_BOSE_HUBBARD_CONSERVED(CouplingModel,MPOModel):
         L = model_params.get('L', 1)
         td = model_params.get('td', 1.)
         U = model_params.get('U', 0.)
+        mu = model_params.get('mu', 0.)
         Ncut = model_params.get('Ncut', 2)
         
         sites = [ sym_sites.BosonSite_DM_conserved(Nmax=Ncut, cons_N='N', cons_D='D', x=x) for x in range(L) ]
@@ -79,5 +80,6 @@ class DIPOLAR_BOSE_HUBBARD_CONSERVED(CouplingModel,MPOModel):
         for x in range(L):
             self.add_onsite( U/2., x, 'NN')
             self.add_onsite( -U/2., x, 'N')
+            self.add_onsite( -mu, x, 'N')
 
         MPOModel.__init__(self, lat, self.calc_H_MPO())
