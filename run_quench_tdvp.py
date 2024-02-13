@@ -278,7 +278,7 @@ if __name__ == "__main__":
 
     dmrg_params['orthogonal_to'] = [psi]
     psi1 = psi.copy()  # MPS.from_product_state(M.lat.mps_sites(), product_state, bc=M.lat.bc_MPS)
-    eng1 = dmrg.TwoSiteDMRGEngine(psi1, M, dmrg_params)
+    eng1 = dmrg.TwoSiteDMRGEngine(psi1, DBHM0, dmrg_params)
     E1, psi1 = eng1.run()
     psi = psi1.copy()
     psi0 = psi.copy()
