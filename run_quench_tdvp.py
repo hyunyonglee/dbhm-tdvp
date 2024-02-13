@@ -198,7 +198,7 @@ if __name__ == "__main__":
     parser.add_argument('--autocorr', action='store_true', help='enable autocorrelation function calculation')
     parser.add_argument('--d_corr_func', action='store_true', help='enable dipole correlation function calculation')
     parser.add_argument('--q_corr_func', action='store_true', help='enable quadrupole correlation function calculation')
-    parser.add_argument('--state', action='GS', help='Ground state or excited state for initial state')
+    parser.add_argument('--state', default='GS', help='Ground state or excited state for initial state')
     args = parser.parse_args()
 
     L = int(args.L)
