@@ -278,7 +278,7 @@ if __name__ == "__main__":
     dmrg_params['orthogonal_to'] = [product_state1]
     
     # ground state
-    eng = dmrg.TwoSiteDMRGEngine(product_state1.copy(), DBHM0, dmrg_params)
+    eng = dmrg.TwoSiteDMRGEngine(product_state2.copy(), DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
     psi0 = psi.copy()
