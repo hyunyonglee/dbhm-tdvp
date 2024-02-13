@@ -18,9 +18,13 @@ def flip_array(array):
     # 배열의 길이
     length = len(array)
     # 1/3 지점과 2/3 지점 계산
-    I = int(length // 3)
-    J = 2 * I
-    
+    I = 0 #int(length // 3)
+    J = length #2 * I
+
+    array[I:I+4] == ['1', '1', '2', '2']
+    array[J-4:J] == ['2', '2', '1', '1']
+
+    '''
     # 1/3 지점에서 요소 뒤집기
     if array[I:I+2] == ['2', '1']:
         array[I:I+2] = ['1', '2']
@@ -34,6 +38,7 @@ def flip_array(array):
             array[J:J+2] = ['1', '2']
         else:
             array[(J-1):J+1] = ['1', '2']
+    '''
     return array
 
 def measurements(psi, L, Qsp=False):
@@ -267,6 +272,7 @@ if __name__ == "__main__":
 
     product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
     product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
+    print(product_state)
     
     # psi = product_state2.copy()
     dmrg_params['orthogonal_to'] = [product_state1]
