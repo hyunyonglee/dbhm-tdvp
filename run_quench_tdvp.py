@@ -7,6 +7,7 @@ import argparse
 import logging.config
 import h5py
 from tenpy.tools import hdf5_io
+import copy
 
 def ensure_dir(f):
     d=os.path.dirname(f)
@@ -14,8 +15,9 @@ def ensure_dir(f):
         os.makedirs(d)
     return d
 
-def flip_array(array):
+def flip_array(A):
     # 배열의 길이
+    array = copy.deepcopy(A)
     length = len(array)
     # 1/3 지점과 2/3 지점 계산
     I = 0 #int(length // 3)
@@ -271,8 +273,10 @@ if __name__ == "__main__":
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
 
     product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
+    print(product_state)
     product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
     print(product_state)
+    print(flip_array(product_state))
     
     # psi = product_state2.copy()
     dmrg_params['orthogonal_to'] = [product_state1]
