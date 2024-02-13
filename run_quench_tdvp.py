@@ -268,11 +268,11 @@ if __name__ == "__main__":
     product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
     product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
     
-    # ground state
+    # psi = product_state2.copy()
     dmrg_params['orthogonal_to'] = [product_state1]
-    eng = dmrg.TwoSiteDMRGEngine(product_state2, DBHM0, dmrg_params)
     
-    # eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
+    # ground state
+    eng = dmrg.TwoSiteDMRGEngine(product_state1.copy(), DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
     psi0 = psi.copy()
