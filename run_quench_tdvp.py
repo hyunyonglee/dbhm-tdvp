@@ -268,6 +268,7 @@ if __name__ == "__main__":
 
     product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
     product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
+    print(product_state)
     
     # ground state
     dmrg_params['orthogonal_to'] = [product_state1]
