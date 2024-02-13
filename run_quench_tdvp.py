@@ -20,7 +20,6 @@ def flip_array(array):
     # 1/3 지점과 2/3 지점 계산
     I = int(length // 3)
     J = 2 * I
-    print(array[I:I+2])
     
     # 1/3 지점에서 요소 뒤집기
     if array[I:I+2] == ['2', '1']:
@@ -225,9 +224,9 @@ if __name__ == "__main__":
     dmrg_params = {
     'mixer' : dmrg.SubspaceExpansion,
     'mixer_params': {
-        'amplitude': 1.e-4,
-        'decay': 2.0,
-        'disable_after': 20
+        'amplitude': 1.e-2,
+        'decay': 1.5,
+        'disable_after': 50
     },
     'trunc_params': {
         'chi_max': chi0,
@@ -268,7 +267,6 @@ if __name__ == "__main__":
 
     product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
     product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
-    print(product_state)
     
     # ground state
     dmrg_params['orthogonal_to'] = [product_state1]
