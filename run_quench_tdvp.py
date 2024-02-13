@@ -247,7 +247,8 @@ if __name__ == "__main__":
         product_state = ['2'] * L
     elif init_state == '1-half-a':
         if L % 2 == 0:
-            raise ValueError("Length must be odd.")
+            product_state = ['1', '2'] * (L // 2)
+            #raise ValueError("Length must be odd.")
         else:
             product_state = ['1', '2'] * (L // 2) + ['1']
     elif init_state == '1-half-b':
