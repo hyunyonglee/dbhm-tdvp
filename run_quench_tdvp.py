@@ -225,7 +225,7 @@ if __name__ == "__main__":
     'mixer' : dmrg.SubspaceExpansion,
     'mixer_params': {
         'amplitude': 1.e-2,
-        'decay': 1.5,
+        'decay': 1.3,
         'disable_after': 100
     },
     'trunc_params': {
