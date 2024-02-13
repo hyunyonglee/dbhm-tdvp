@@ -198,6 +198,7 @@ if __name__ == "__main__":
     parser.add_argument('--autocorr', action='store_true', help='enable autocorrelation function calculation')
     parser.add_argument('--d_corr_func', action='store_true', help='enable dipole correlation function calculation')
     parser.add_argument('--q_corr_func', action='store_true', help='enable quadrupole correlation function calculation')
+    parser.add_argument('--state', action='GS', help='Ground state or excited state for initial state')
     args = parser.parse_args()
 
     L = int(args.L)
@@ -214,6 +215,7 @@ if __name__ == "__main__":
     dt = float(args.dt)
     init_state = args.init_state
     path = args.path
+    state = args.state
     
     #################
     # before quench #
@@ -275,16 +277,14 @@ if __name__ == "__main__":
     product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
     product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
     
+    if state == 'GS':
+        # ground state
+        eng = dmrg.TwoSiteDMRGEngine(product_state1.copy(), DBHM0, dmrg_params)
+    else:
+        # Excited state
+        dmrg_params['orthogonal_to'] = [product_state1]
+        eng = dmrg.TwoSiteDMRGEngine(product_state2.copy(), DBHM0, dmrg_params)
     
-    # ground state
-    # eng = dmrg.TwoSiteDMRGEngine(product_state1.copy(), DBHM0, dmrg_params)
-    # E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
-    # psi.canonical_form()
-    # psi0 = psi.copy()
-
-    # Excited state
-    dmrg_params['orthogonal_to'] = [product_state1]
-    eng = dmrg.TwoSiteDMRGEngine(product_state2.copy(), DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
     psi0 = psi.copy()
