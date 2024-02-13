@@ -20,6 +20,7 @@ def flip_array(array):
     # 1/3 지점과 2/3 지점 계산
     I = int(length // 3)
     J = 2 * I
+    print(array[I:I+2])
     
     # 1/3 지점에서 요소 뒤집기
     if array[I:I+2] == ['2', '1']:
