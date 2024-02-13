@@ -226,7 +226,7 @@ if __name__ == "__main__":
     'mixer_params': {
         'amplitude': 1.e-2,
         'decay': 1.5,
-        'disable_after': 50
+        'disable_after': 100
     },
     'trunc_params': {
         'chi_max': chi0,
