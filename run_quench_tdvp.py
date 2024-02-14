@@ -19,14 +19,17 @@ def flip_array(A):
     # 배열의 길이
     array = copy.deepcopy(A)
     length = len(array)
+    
     # 1/3 지점과 2/3 지점 계산
-    I = 0 #int(length // 3)
-    J = length #2 * I
-
-    array[I:I+4] = ['1', '1', '2', '2']
-    array[J-4:J] = ['2', '2', '1', '1']
+    I = int(length // 3)
+    J = 2 * I
 
     '''
+    I = 0
+    J = length
+    array[I:I+4] = ['1', '1', '2', '2']
+    array[J-4:J] = ['2', '2', '1', '1']
+    ''' 
     # 1/3 지점에서 요소 뒤집기
     if array[I:I+2] == ['2', '1']:
         array[I:I+2] = ['1', '2']
@@ -40,7 +43,6 @@ def flip_array(A):
             array[J:J+2] = ['1', '2']
         else:
             array[(J-1):J+1] = ['1', '2']
-    '''
     return array
 
 def measurements(psi, L, Qsp=False):
