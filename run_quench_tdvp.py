@@ -92,8 +92,8 @@ def measurements(psi, L, Qsp=False):
             Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
             Qsp_center2[i] = Q.real
         
-    LR_Density = np.zeros(int(L)/2)
-    for i in range(0,int(L)/2):
+    LR_Density = np.zeros(int(L/2))
+    for i in range(0,int(L/2)):
         a = psi.expectation_value_term([('N',2*i)])
         b = psi.expectation_value_term([('N',2*i),('N',2*i+1)])
         LR_Density[i] = 2*a-b
