@@ -15,32 +15,72 @@ def ensure_dir(f):
         os.makedirs(d)
     return d
 
-def ex_configuration(L):
+def ex1_configuration(L):
     
-    lr_state = ['1', '2'] * (L//2) + ['1']
+    ex_state = ['1', '2'] * (L//2) + ['1']
     C = L // 2
-    # if lr_state[C] == '2':
-    #     lr_state[C-1:C+2] = ['2','0','2']
-    # else:
-    #     lr_state[C:C+3] = ['2','0','2']
-
-    if lr_state[C] == '1':
-        lr_state[C-1:C+2] = ['1','3','1']
+    
+    if ex_state[C] == '1':
+        ex_state[C-1:C+2] = ['1','3','1']
     else:
-        lr_state[C:C+3] = ['1','3','1']
+        ex_state[C:C+3] = ['1','3','1']
+
+    return ex_state
+
+def ex2_configuration(L):
+    
+    ex_state = ['1', '2'] * (L//2) + ['1']
+    
+    # 1/3 지점과 2/3 지점 계산
+    I = int(L // 3)
+    J = 2 * I
+
+    # 1/3 지점에서 요소 뒤집기
+    if ex_state[I] == '1':
+        ex_state[I-1:I+2] = ['1','3','1']
+    else:
+        ex_state[I:I+3] = ['1','3','1']
+
+    if ex_state[J] == '1':
+        ex_state[J-1:J+2] = ['1','3','1']
+    else:
+        ex_state[J:J+3] = ['1','3','1']
+
+    return ex_state
+
+def lr1_configuration(L):
+
+    lr_state = ['1', '2'] * (L//2) + ['1']
+    C = (L // 2)-3
+    if lr_state[C] == '1':
+        lr_state[C:C+5] = ['2','1','1','1','2']
+    else:
+        lr_state[(C-1):C+4] = ['2','1','1','1','2']
 
     return lr_state
 
-def lr_configuration(L):
+def lr2_configuration(L):
+    # 배열의 길이
+    lr_state = ['1', '2'] * (L//2) + ['1']
+    
+    # 1/3 지점과 2/3 지점 계산
+    I = int(L // 3)
+    J = 2 * I
 
-    ex_state = ['1', '2'] * (L//2) + ['1']
-    C = (L // 2)-3
-    if ex_state[C] == '1':
-        ex_state[C:C+5] = ['2','1','1','1','2']
+    # 1/3 지점에서 요소 뒤집기
+    if lr_state[I:I+2] == ['2', '1']:
+        lr_state[I:I+2] = ['1', '2']
+        if lr_state[J:J+2] == ['1', '2']:
+            lr_state[J:J+2] = ['2', '1']
+        else:
+            lr_state[(J-1):J+1] = ['2', '1']
     else:
-        ex_state[(C-1):C+4] = ['2','1','1','1','2']
-
-    return ex_state
+        lr_state[I:I+2] = ['2', '1']
+        if lr_state[J:J+2] == ['2', '1']:
+            lr_state[J:J+2] = ['1', '2']
+        else:
+            lr_state[(J-1):J+1] = ['1', '2']
+    return lr_state
 
 def measurements(psi, L):
     
@@ -95,7 +135,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR, F_EX, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_EX1, F_EX2, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -127,7 +167,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor,
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_LR) + " " + repr(F_EX) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_LR1) + " " + repr(F_LR2) + " " + repr(F_EX1) + " " + repr(F_EX2) + " " + "\n")
     file.close()
     
 
@@ -244,10 +284,14 @@ if __name__ == "__main__":
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
     cdw_state = psi.copy()
 
-    lr_array = lr_configuration(L)
-    ex_array = ex_configuration(L)
-    lr_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr_array, bc=DBHM0.lat.bc_MPS)
-    ex_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_array, bc=DBHM0.lat.bc_MPS)
+    lr1_array = lr1_configuration(L)
+    lr2_array = lr2_configuration(L)
+    ex1_array = ex1_configuration(L)
+    ex2_array = ex2_configuration(L)
+    lr1_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr1_array, bc=DBHM0.lat.bc_MPS)
+    lr2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr2_array, bc=DBHM0.lat.bc_MPS)
+    ex1_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex1_array, bc=DBHM0.lat.bc_MPS)
+    ex2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex2_array, bc=DBHM0.lat.bc_MPS)
     
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
@@ -284,9 +328,11 @@ if __name__ == "__main__":
     
     Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE = measurements(psi, L)
     F_CDW = np.abs(psi.overlap(cdw_state))
-    F_LR = np.abs(psi.overlap(lr_state))
-    F_EX = np.abs(psi.overlap(ex_state))
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR, F_EX, EE, 0, path )
+    F_LR1 = np.abs(psi.overlap(lr1_state))
+    F_LR2 = np.abs(psi.overlap(lr2_state))
+    F_EX1 = np.abs(psi.overlap(ex1_state))
+    F_EX2 = np.abs(psi.overlap(ex2_state))
+    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR1, F_LR2, F_EX1, F_EX2, EE, 0, path )
 
     ################
     # after quench #
@@ -367,10 +413,12 @@ if __name__ == "__main__":
 
             F = np.abs(psi.overlap(psi0))
             F_CDW = np.abs(psi.overlap(cdw_state))
-            F_LR = np.abs(psi.overlap(lr_state))
-            F_EX = np.abs(psi.overlap(ex_state))
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR, F_EX, EE, tdvp_engine.evolved_time, path )
-            
+            F_LR1 = np.abs(psi.overlap(lr1_state))
+            F_LR2 = np.abs(psi.overlap(lr2_state))
+            F_EX1 = np.abs(psi.overlap(ex1_state))
+            F_EX2 = np.abs(psi.overlap(ex2_state))
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_EX1, F_EX2, EE, 0, path )
+
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
 
