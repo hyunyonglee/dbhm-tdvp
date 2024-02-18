@@ -15,37 +15,29 @@ def ensure_dir(f):
         os.makedirs(d)
     return d
 
-def flip_array(A):
-    # 배열의 길이
-    array = copy.deepcopy(A)
-    length = len(array)
+def lr_configuration(L):
     
-    # 1/3 지점과 2/3 지점 계산
-    I = int(length // 3)
-    J = 2 * I
-
-    '''
-    I = 0
-    J = length
-    array[I:I+4] = ['1', '1', '2', '2']
-    array[J-4:J] = ['2', '2', '1', '1']
-    ''' 
-    # 1/3 지점에서 요소 뒤집기
-    if array[I:I+2] == ['2', '1']:
-        array[I:I+2] = ['1', '2']
-        if array[J:J+2] == ['1', '2']:
-            array[J:J+2] = ['2', '1']
-        else:
-            array[(J-1):J+1] = ['2', '1']
+    lr_state = ['1', '2'] * (L//2) + ['1']
+    C = L // 2
+    if lr_state[C] == '2':
+        lr_state[C-1:C+2] = ['2','0','2']
     else:
-        array[I:I+2] = ['2', '1']
-        if array[J:J+2] == ['2', '1']:
-            array[J:J+2] = ['1', '2']
-        else:
-            array[(J-1):J+1] = ['1', '2']
-    return array
+        lr_state[C:C+3] = ['2','0','2']
 
-def measurements(psi, L, Qsp=False):
+    return lr_state
+
+def ex_configuration(L):
+
+    ex_state = ['1', '2'] * (L//2) + ['1']
+    C = (L // 2)-3
+    if ex_state[C] == '1':
+        ex_state[C:C+5] = ['2','1','1','1','2']
+    else:
+        ex_state[(C-1):C+4] = ['2','1','1','1','2']
+
+    return ex_state
+
+def measurements(psi, L):
     
     # Measurements
     Ns = psi.expectation_value("N")
@@ -54,13 +46,9 @@ def measurements(psi, L, Qsp=False):
     
     # Measuring Correlation functions from the center
     Cnn_center = np.zeros(L)
-    Density_center = np.zeros(L-1)
     Dsp_center1 = np.zeros(L-1)
     Dsp_center2 = np.zeros(L-1)
     
-    Qsp_center1 = np.zeros(L-2)
-    Qsp_center2 = np.zeros(L-2)
-
     for i in range(0,L):
         I = i
         if L%2 == 0:
@@ -73,32 +61,12 @@ def measurements(psi, L, Qsp=False):
         Cnn_center[i] = C.real
         
         if i<L-1:
-            DensityC = psi.expectation_value_term([('N',I),('N',I+1),('N',J),('N',J+1)])
-            DensityC = DensityC - psi.expectation_value_term([('N',I),('N',I+1)]) * psi.expectation_value_term([('N',J),('N',J+1)])
-            Density_center[i] = DensityC.real
-        
-        if i<L-1:
             D = psi.expectation_value_term([('Bd',I),('B',I+1),('Bd',J),('B',J-1)])
             Dsp_center1[i] = D.real
             D = psi.expectation_value_term([('Bd',I),('B',I+1),('Bd',J+1),('B',J)])
             Dsp_center2[i] = D.real
 
-        if Qsp and i<L-2:
-            Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('B',J+1),('Bd',J),('Bd',J),('B',J-1)])
-            Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('B',J+1),('Bd',J),('Bd',J),('B',J-1)])
-            Qsp_center1[i] = Q.real
-            
-            Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
-            Q = Q - psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2)]) * psi.expectation_value_term([('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
-            Qsp_center2[i] = Q.real
-        
-    LR_Density = np.zeros(int(L/2))
-    for i in range(0,int(L/2)):
-        a = psi.expectation_value_term([('N',2*i)])
-        b = psi.expectation_value_term([('N',2*i),('N',2*i+1)])
-        LR_Density[i] = 2*a-b
-    
-    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, LR_Density, EE
+    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE
 
 
 def dc_corr_func(psi, L, time, path):
@@ -122,7 +90,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, LR_Density, Bcor, Ncor, Dcor, F, F1, F2, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_LR, F_EX, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -135,38 +103,26 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_
     file_Ns = open(path+"/observables/Ns.txt","a", 1)
     file_NNs = open(path+"/observables/NNs.txt","a", 1)
     file_Cnn = open(path+"/observables/Cnn.txt","a", 1)
-    file_Density = open(path+"/observables/DensityDensity.txt","a", 1)
     file_Dsp1 = open(path+"/observables/Dsp1.txt","a", 1)
     file_Dsp2 = open(path+"/observables/Dsp2.txt","a", 1)
-    file_Qsp1 = open(path+"/observables/Qsp1.txt","a", 1)
-    file_Qsp2 = open(path+"/observables/Qsp2.txt","a", 1)
-    file_LR = open(path+"/observables/LR_Density.txt","a", 1)
-
+    
     file_EE.write(repr(time) + " " + "  ".join(map(str, EE)) + " " + "\n")
     file_Ns.write(repr(time) + " " + "  ".join(map(str, Ns)) + " " + "\n")
     file_NNs.write(repr(time) + " " + "  ".join(map(str, NNs)) + " " + "\n")
     file_Cnn.write(repr(time) + " " + "  ".join(map(str, Cnn_center)) + " " + "\n")
-    file_Density.write(repr(time) + " " + "  ".join(map(str, Density_center)) + " " + "\n")
     file_Dsp1.write(repr(time) + " " + "  ".join(map(str, Dsp_center1)) + " " + "\n")
     file_Dsp2.write(repr(time) + " " + "  ".join(map(str, Dsp_center2)) + " " + "\n")
-    file_Qsp1.write(repr(time) + " " + "  ".join(map(str, Qsp_center1)) + " " + "\n")
-    file_Qsp2.write(repr(time) + " " + "  ".join(map(str, Qsp_center2)) + " " + "\n")
-    file_LR.write(repr(time) + " " + "  ".join(map(str, LR_Density)) + " " + "\n")
     
     file_EE.close()
     file_Ns.close()
     file_NNs.close()
     file_Cnn.close()
-    file_Density.close()
     file_Dsp1.close()
     file_Dsp2.close()
-    file_Qsp1.close()
-    file_Qsp2.close()
-    file_LR.close()
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(np.abs(F)) + " " + repr(F.real) + " " + repr(F.imag) + " " + repr(np.abs(F1)) + " " + repr(np.abs(F2)) + " " + repr(np.sum(LR_Density)) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(np.abs(F)) + " " + repr(np.abs(F_LR)) + " " + repr(np.abs(F_EX)) + " " + "\n")
     file.close()
     
 
@@ -208,8 +164,6 @@ if __name__ == "__main__":
     parser.add_argument("--path", default=current_directory, help="path for saving data")
     parser.add_argument('--autocorr', action='store_true', help='enable autocorrelation function calculation')
     parser.add_argument('--d_corr_func', action='store_true', help='enable dipole correlation function calculation')
-    parser.add_argument('--q_corr_func', action='store_true', help='enable quadrupole correlation function calculation')
-    parser.add_argument('--state', default='GS', help='Ground state or excited state for initial state')
     args = parser.parse_args()
 
     L = int(args.L)
@@ -226,7 +180,6 @@ if __name__ == "__main__":
     dt = float(args.dt)
     init_state = args.init_state
     path = args.path
-    state = args.state
     
     #################
     # before quench #
@@ -285,17 +238,12 @@ if __name__ == "__main__":
     DBHM0 = model.DIPOLAR_BOSE_HUBBARD_CONSERVED(model_params0)
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
 
-    product_state1 = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
-    product_state2 = MPS.from_product_state(DBHM0.lat.mps_sites(), flip_array(product_state), bc=DBHM0.lat.bc_MPS)
+    lr_array = lr_configuration(L)
+    ex_array = ex_configuration(L)
+    lr_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr_array, bc=DBHM0.lat.bc_MPS)
+    ex_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_array, bc=DBHM0.lat.bc_MPS)
     
-    if state == 'GS':
-        # ground state
-        eng = dmrg.TwoSiteDMRGEngine(product_state1.copy(), DBHM0, dmrg_params)
-    else:
-        # Excited state
-        dmrg_params['orthogonal_to'] = [product_state1]
-        eng = dmrg.TwoSiteDMRGEngine(product_state2.copy(), DBHM0, dmrg_params)
-    
+    eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
     psi0 = psi.copy()
@@ -328,10 +276,10 @@ if __name__ == "__main__":
         Ncor = 0.
         Dcor = 0.
     
-    Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, LR_Density, EE = measurements(psi, L, args.q_corr_func)
-    F1 = psi.overlap(product_state1)
-    F2 = psi.overlap(product_state2)        
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, LR_Density, Bcor, Ncor, Dcor, 1., F1, F2, EE, 0, path )
+    Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE = measurements(psi, L)
+    F_LR = np.abs(psi.overlap(lr_state))
+    F_EX = np.abs(psi.overlap(ex_state))
+    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1., F_LR, F_EX, EE, 0, path )
 
     ################
     # after quench #
@@ -394,7 +342,7 @@ if __name__ == "__main__":
                 tdvp_two_site_d = False
 
         if (i+1) % Mstep == 0:    
-            Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, LR_Density, EE = measurements(psi, L, args.q_corr_func)
+            Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE = measurements(psi, L)
 
             if args.autocorr:
                 psi_T_b = psi.copy()
@@ -410,10 +358,10 @@ if __name__ == "__main__":
                 Ncor = psi_n.overlap( psi_T_n )
                 Dcor = psi_d.overlap( psi_T_d )
 
-            F = psi.overlap(psi0)
-            F1 = psi.overlap(product_state1)
-            F2 = psi.overlap(product_state2)
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Density_center, LR_Density, Bcor, Ncor, Dcor, F, F1, F2, EE, tdvp_engine.evolved_time, path )
+            F = np.abs(psi.overlap(psi0))
+            F_LR = np.abs(psi.overlap(lr_state))
+            F_EX = np.abs(psi.overlap(ex_state))
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_LR, F_EX, EE, tdvp_engine.evolved_time, path )
             
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
