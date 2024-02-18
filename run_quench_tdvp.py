@@ -15,7 +15,7 @@ def ensure_dir(f):
         os.makedirs(d)
     return d
 
-def lr_configuration(L):
+def ex_configuration(L):
     
     lr_state = ['1', '2'] * (L//2) + ['1']
     C = L // 2
@@ -26,7 +26,7 @@ def lr_configuration(L):
 
     return lr_state
 
-def ex_configuration(L):
+def lr_configuration(L):
 
     ex_state = ['1', '2'] * (L//2) + ['1']
     C = (L // 2)-3
