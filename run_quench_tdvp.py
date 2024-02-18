@@ -19,10 +19,15 @@ def ex_configuration(L):
     
     lr_state = ['1', '2'] * (L//2) + ['1']
     C = L // 2
-    if lr_state[C] == '2':
-        lr_state[C-1:C+2] = ['2','0','2']
+    # if lr_state[C] == '2':
+    #     lr_state[C-1:C+2] = ['2','0','2']
+    # else:
+    #     lr_state[C:C+3] = ['2','0','2']
+
+    if lr_state[C] == '1':
+        lr_state[C-1:C+2] = ['1','3','1']
     else:
-        lr_state[C:C+3] = ['2','0','2']
+        lr_state[C:C+3] = ['1','3','1']
 
     return lr_state
 
