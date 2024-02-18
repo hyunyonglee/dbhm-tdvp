@@ -90,7 +90,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_LR, F_EX, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR, F_EX, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -122,7 +122,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor,
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(np.abs(F)) + " " + repr(np.abs(F_LR)) + " " + repr(np.abs(F_EX)) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_LR) + " " + repr(F_EX) + " " + "\n")
     file.close()
     
 
@@ -237,6 +237,7 @@ if __name__ == "__main__":
     
     DBHM0 = model.DIPOLAR_BOSE_HUBBARD_CONSERVED(model_params0)
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
+    cdw_state = psi.copy()
 
     lr_array = lr_configuration(L)
     ex_array = ex_configuration(L)
@@ -277,9 +278,10 @@ if __name__ == "__main__":
         Dcor = 0.
     
     Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE = measurements(psi, L)
+    F_CDW = np.abs(psi.overlap(cdw_state))
     F_LR = np.abs(psi.overlap(lr_state))
     F_EX = np.abs(psi.overlap(ex_state))
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1., F_LR, F_EX, EE, 0, path )
+    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR, F_EX, EE, 0, path )
 
     ################
     # after quench #
@@ -359,9 +361,10 @@ if __name__ == "__main__":
                 Dcor = psi_d.overlap( psi_T_d )
 
             F = np.abs(psi.overlap(psi0))
+            F_CDW = np.abs(psi.overlap(cdw_state))
             F_LR = np.abs(psi.overlap(lr_state))
             F_EX = np.abs(psi.overlap(ex_state))
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_LR, F_EX, EE, tdvp_engine.evolved_time, path )
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR, F_EX, EE, tdvp_engine.evolved_time, path )
             
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
