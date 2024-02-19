@@ -417,7 +417,7 @@ if __name__ == "__main__":
             F_LR2 = np.abs(psi.overlap(lr2_state))
             F_EX1 = np.abs(psi.overlap(ex1_state))
             F_EX2 = np.abs(psi.overlap(ex2_state))
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_EX1, F_EX2, EE, 0, path )
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_EX1, F_EX2, EE, tdvp_engine.evolved_time, path )
 
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
