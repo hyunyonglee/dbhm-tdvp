@@ -282,7 +282,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_202_1, F_202_2, F_040_1, F_040_2, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -314,7 +314,7 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor,
     
     #
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_LR1) + " " + repr(F_LR2) + " " + repr(F_131_1) + " " + repr(F_131_2) + " " + repr(F_202_1) + " " + repr(F_202_2) + " " + repr(F_040_1) + " " + repr(F_040_2) + " " + "\n")
+    file.write(repr(time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(np.mean(Ns)) + " " + repr(np.mean(NNs)) + " " + repr(np.abs(Bcor)) + " " + repr(np.abs(Ncor)) + " " + repr(np.abs(Dcor)) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_LR1) + " " + repr(F_LR2) + " " + repr(F_131_1) + " " + repr(F_131_2) + " " + repr(F_131_3) + " " + repr(F_202_1) + " " + repr(F_202_2) + " " + repr(F_202_3) + " " + repr(F_040_1) + " " + repr(F_040_2) + " " + repr(F_040_3) + " " + "\n")
     file.close()
     
 
