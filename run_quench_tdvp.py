@@ -114,6 +114,87 @@ def ex_040_two_configuration(L):
 
     return ex_state
 
+def ex_131_three_configuration(L):
+    
+    ex_state = ['1', '2'] * (L//2) + ['1']
+    
+    # 1/3 지점과 2/3 지점 계산
+    I = int(L // 3)
+    J = 2 * I
+    C = L // 2
+    
+    if ex_state[C] == '1':
+        ex_state[C-1:C+2] = ['1','3','1']
+    else:
+        ex_state[C:C+3] = ['1','3','1']
+
+    # 1/3 지점에서 요소 뒤집기
+    if ex_state[I] == '1':
+        ex_state[I-1:I+2] = ['1','3','1']
+    else:
+        ex_state[I:I+3] = ['1','3','1']
+
+    if ex_state[J] == '1':
+        ex_state[J-1:J+2] = ['1','3','1']
+    else:
+        ex_state[J:J+3] = ['1','3','1']
+
+    return ex_state
+
+def ex_202_three_configuration(L):
+    
+    ex_state = ['1', '2'] * (L//2) + ['1']
+    
+    # 1/3 지점과 2/3 지점 계산
+    I = int(L // 3)
+    J = 2 * I
+    C = L // 2
+    
+    if ex_state[C] == '2':
+        ex_state[C-1:C+2] = ['2','0','2']
+    else:
+        ex_state[C:C+3] = ['2','0','2']
+
+    # 1/3 지점에서 요소 뒤집기
+    if ex_state[I] == '2':
+        ex_state[I-1:I+2] = ['2','0','2']
+    else:
+        ex_state[I:I+3] = ['2','0','2']
+
+    if ex_state[J] == '2':
+        ex_state[J-1:J+2] = ['2','0','2']
+    else:
+        ex_state[J:J+3] = ['2','0','2']
+
+    return ex_state
+
+def ex_040_three_configuration(L):
+    
+    ex_state = ['1', '2'] * (L//2) + ['1']
+    
+    # 1/3 지점과 2/3 지점 계산
+    I = int(L // 3)
+    J = 2 * I
+    C = L // 2
+    
+    if ex_state[C] == '2':
+        ex_state[C-1:C+2] = ['0','4','0']
+    else:
+        ex_state[C:C+3] = ['0','4','0']
+
+    # 1/3 지점에서 요소 뒤집기
+    if ex_state[I] == '2':
+        ex_state[I-1:I+2] = ['0','4','0']
+    else:
+        ex_state[I:I+3] = ['0','4','0']
+
+    if ex_state[J] == '2':
+        ex_state[J-1:J+2] = ['0','4','0']
+    else:
+        ex_state[J:J+3] = ['0','4','0']
+
+    return ex_state
+
 def lr1_configuration(L):
 
     lr_state = ['1', '2'] * (L//2) + ['1']
@@ -354,10 +435,13 @@ if __name__ == "__main__":
     lr2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr2_configuration(L), bc=DBHM0.lat.bc_MPS)
     ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_configuration(L), bc=DBHM0.lat.bc_MPS)
     ex_131_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_two_configuration(L), bc=DBHM0.lat.bc_MPS)
+    ex_131_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_three_configuration(L), bc=DBHM0.lat.bc_MPS)
     ex_202_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_configuration(L), bc=DBHM0.lat.bc_MPS)
     ex_202_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_two_configuration(L), bc=DBHM0.lat.bc_MPS)
+    ex_202_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_three_configuration(L), bc=DBHM0.lat.bc_MPS)
     ex_040_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_configuration(L), bc=DBHM0.lat.bc_MPS)
     ex_040_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_two_configuration(L), bc=DBHM0.lat.bc_MPS)
+    ex_040_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_three_configuration(L), bc=DBHM0.lat.bc_MPS)
     
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
@@ -398,11 +482,14 @@ if __name__ == "__main__":
     F_LR2 = np.abs(psi.overlap(lr2_state))
     F_131_1 = np.abs(psi.overlap(ex_131_state))
     F_131_2 = np.abs(psi.overlap(ex_131_two_state))
+    F_131_3 = np.abs(psi.overlap(ex_131_three_state))
     F_202_1 = np.abs(psi.overlap(ex_202_state))
     F_202_2 = np.abs(psi.overlap(ex_202_two_state))
+    F_202_3 = np.abs(psi.overlap(ex_202_three_state))
     F_040_1 = np.abs(psi.overlap(ex_040_state))
     F_040_2 = np.abs(psi.overlap(ex_040_two_state))
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_202_1, F_202_2, F_040_1, F_040_2, EE, 0, path )
+    F_040_3 = np.abs(psi.overlap(ex_040_three_state))
+    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, 0, path )
 
     ################
     # after quench #
@@ -487,11 +574,14 @@ if __name__ == "__main__":
             F_LR2 = np.abs(psi.overlap(lr2_state))
             F_131_1 = np.abs(psi.overlap(ex_131_state))
             F_131_2 = np.abs(psi.overlap(ex_131_two_state))
+            F_131_3 = np.abs(psi.overlap(ex_131_three_state))
             F_202_1 = np.abs(psi.overlap(ex_202_state))
             F_202_2 = np.abs(psi.overlap(ex_202_two_state))
+            F_202_3 = np.abs(psi.overlap(ex_202_three_state))
             F_040_1 = np.abs(psi.overlap(ex_040_state))
             F_040_2 = np.abs(psi.overlap(ex_040_two_state))
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_202_1, F_202_2, F_040_1, F_040_2, EE, tdvp_engine.evolved_time, path )
+            F_040_3 = np.abs(psi.overlap(ex_040_three_state))
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, tdvp_engine.evolved_time, path )
 
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
