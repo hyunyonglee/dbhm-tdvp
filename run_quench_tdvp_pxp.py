@@ -77,8 +77,8 @@ if __name__ == "__main__":
     'mixer' : dmrg.SubspaceExpansion,
     'mixer_params': {
         'amplitude': 1.e-2,
-        'decay': 1.3,
-        'disable_after': 100
+        'decay': 2.0,
+        'disable_after': 40
     },
     'trunc_params': {
         'chi_max': chi0,
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     'chi_list': { 0: 10, 5: 20, 10: chi0 },
     'max_E_err': 1.0e-9,
     'max_S_err': 1.0e-9,
-    'max_sweeps': 100,
+    'max_sweeps': 50,
     'combine' : True
     }
 
