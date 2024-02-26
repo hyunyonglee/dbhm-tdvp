@@ -96,7 +96,6 @@ if __name__ == "__main__":
     product_state2 = []
     product_state3 = []
     local_state1 = np.array( [1., 0., 0., 0.] )
-    print(M.lat.N_sites)
     for i in range(0, L):
         product_state1.append(local_state1)
         product_state2.append(local_state1)
@@ -106,7 +105,6 @@ if __name__ == "__main__":
     product_state3[L//2] = np.array( [0., 0., 1., 0.] )
         
     file = open(path+"/observables.txt","a", 1)    
-    file.close()
     
 
     DBHM0 = model.EFFECTIVE_PXP(model_params0)
@@ -168,4 +166,6 @@ if __name__ == "__main__":
         F_202 = np.abs(psi.overlap(ex_202_state))
         
         file.write(repr(tdvp_engine.evolved_time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_131) + " " + repr(F_202) + " " + "\n")
+    
+    file.close()
     
