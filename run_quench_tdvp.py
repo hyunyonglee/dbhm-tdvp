@@ -240,6 +240,8 @@ def measurements(psi, L):
     Cnn_center = np.zeros(L)
     Dsp_center1 = np.zeros(L-1)
     Dsp_center2 = np.zeros(L-1)
+    Qsp_center = np.zeros(L-2)
+
     
     for i in range(0,L):
         I = i
@@ -257,8 +259,12 @@ def measurements(psi, L):
             Dsp_center1[i] = D.real
             D = psi.expectation_value_term([('Bd',I),('B',I+1),('Bd',J+1),('B',J)])
             Dsp_center2[i] = D.real
+        
+        if i<L-2:
+            Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
+            Qsp_center[i] = Q.real
 
-    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE
+    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center, EE
 
 
 def dc_corr_func(psi, L, time, path):
@@ -282,7 +288,7 @@ def dc_corr_func(psi, L, time, path):
     file_Dsp_corr2.close()
 
 
-def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, time, path ):
+def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, time, path ):
 
     ensure_dir(path+"/observables/")
     ensure_dir(path+"/mps/")
@@ -297,6 +303,8 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor,
     file_Cnn = open(path+"/observables/Cnn.txt","a", 1)
     file_Dsp1 = open(path+"/observables/Dsp1.txt","a", 1)
     file_Dsp2 = open(path+"/observables/Dsp2.txt","a", 1)
+    file_Qsp1 = open(path+"/observables/Qsp1.txt","a", 1)
+    file_Qsp2 = open(path+"/observables/Qsp2.txt","a", 1)
     
     file_EE.write(repr(time) + " " + "  ".join(map(str, EE)) + " " + "\n")
     file_Ns.write(repr(time) + " " + "  ".join(map(str, Ns)) + " " + "\n")
@@ -304,6 +312,8 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor,
     file_Cnn.write(repr(time) + " " + "  ".join(map(str, Cnn_center)) + " " + "\n")
     file_Dsp1.write(repr(time) + " " + "  ".join(map(str, Dsp_center1)) + " " + "\n")
     file_Dsp2.write(repr(time) + " " + "  ".join(map(str, Dsp_center2)) + " " + "\n")
+    file_Qsp1.write(repr(time) + " " + "  ".join(map(str, Qsp_center1)) + " " + "\n")
+    file_Qsp2.write(repr(time) + " " + "  ".join(map(str, Qsp_center2)) + " " + "\n")
     
     file_EE.close()
     file_Ns.close()
@@ -311,6 +321,8 @@ def write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor,
     file_Cnn.close()
     file_Dsp1.close()
     file_Dsp2.close()
+    file_Qsp1.close()
+    file_Qsp2.close()
     
     #
     file = open(path+"/observables.txt","a", 1)    
@@ -476,7 +488,7 @@ if __name__ == "__main__":
         Ncor = 0.
         Dcor = 0.
     
-    Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE = measurements(psi, L)
+    Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE = measurements(psi, L)
     F_CDW = np.abs(psi.overlap(cdw_state))
     F_LR1 = np.abs(psi.overlap(lr1_state))
     F_LR2 = np.abs(psi.overlap(lr2_state))
@@ -489,7 +501,7 @@ if __name__ == "__main__":
     F_040_1 = np.abs(psi.overlap(ex_040_state))
     F_040_2 = np.abs(psi.overlap(ex_040_two_state))
     F_040_3 = np.abs(psi.overlap(ex_040_three_state))
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, 0, path )
+    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, 0, path )
 
     ################
     # after quench #
@@ -552,7 +564,7 @@ if __name__ == "__main__":
                 tdvp_two_site_d = False
 
         if (i+1) % Mstep == 0:    
-            Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, EE = measurements(psi, L)
+            Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE = measurements(psi, L)
 
             if args.autocorr:
                 psi_T_b = psi.copy()
@@ -581,7 +593,7 @@ if __name__ == "__main__":
             F_040_1 = np.abs(psi.overlap(ex_040_state))
             F_040_2 = np.abs(psi.overlap(ex_040_two_state))
             F_040_3 = np.abs(psi.overlap(ex_040_three_state))
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, tdvp_engine.evolved_time, path )
+            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, tdvp_engine.evolved_time, path )
 
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
