@@ -240,7 +240,8 @@ def measurements(psi, L):
     Cnn_center = np.zeros(L)
     Dsp_center1 = np.zeros(L-1)
     Dsp_center2 = np.zeros(L-1)
-    Qsp_center = np.zeros(L-2)
+    Qsp_center1 = np.zeros(L-2)
+    Qsp_center2 = np.zeros(L-2)
 
     
     for i in range(0,L):
@@ -262,9 +263,11 @@ def measurements(psi, L):
         
         if i<L-2:
             Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('B',J+2),('Bd',J+1),('Bd',J+1),('B',J)])
-            Qsp_center[i] = Q.real
+            Qsp_center1[i] = Q.real
+            Q = psi.expectation_value_term([('Bd',I),('B',I+1),('B',I+1),('Bd',I+2),('B',J+1),('Bd',J),('Bd',J),('B',J-1)])
+            Qsp_center1[i] = Q.real
 
-    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center, EE
+    return Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE
 
 
 def dc_corr_func(psi, L, time, path):
