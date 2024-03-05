@@ -446,18 +446,19 @@ if __name__ == "__main__":
     psi = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state, bc=DBHM0.lat.bc_MPS)
     cdw_state = psi.copy()
 
-    lr1_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr1_configuration(L), bc=DBHM0.lat.bc_MPS)
-    lr2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr2_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_131_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_two_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_131_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_three_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_202_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_202_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_two_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_202_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_three_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_040_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_040_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_two_configuration(L), bc=DBHM0.lat.bc_MPS)
-    ex_040_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_three_configuration(L), bc=DBHM0.lat.bc_MPS)
-    
+    if init_state == '1-half-a':
+        lr1_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr1_configuration(L), bc=DBHM0.lat.bc_MPS)
+        lr2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr2_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_131_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_two_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_131_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_three_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_202_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_202_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_two_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_202_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_three_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_040_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_040_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_two_configuration(L), bc=DBHM0.lat.bc_MPS)
+        ex_040_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_three_configuration(L), bc=DBHM0.lat.bc_MPS)
+        
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
     psi.canonical_form()
@@ -492,19 +493,22 @@ if __name__ == "__main__":
         Dcor = 0.
     
     Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE = measurements(psi, L)
-    F_CDW = np.abs(psi.overlap(cdw_state))
-    F_LR1 = np.abs(psi.overlap(lr1_state))
-    F_LR2 = np.abs(psi.overlap(lr2_state))
-    F_131_1 = np.abs(psi.overlap(ex_131_state))
-    F_131_2 = np.abs(psi.overlap(ex_131_two_state))
-    F_131_3 = np.abs(psi.overlap(ex_131_three_state))
-    F_202_1 = np.abs(psi.overlap(ex_202_state))
-    F_202_2 = np.abs(psi.overlap(ex_202_two_state))
-    F_202_3 = np.abs(psi.overlap(ex_202_three_state))
-    F_040_1 = np.abs(psi.overlap(ex_040_state))
-    F_040_2 = np.abs(psi.overlap(ex_040_two_state))
-    F_040_3 = np.abs(psi.overlap(ex_040_three_state))
-    write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, 0, path )
+    if init_state == '1-half-a':
+        F_CDW = np.abs(psi.overlap(cdw_state))
+        F_LR1 = np.abs(psi.overlap(lr1_state))
+        F_LR2 = np.abs(psi.overlap(lr2_state))
+        F_131_1 = np.abs(psi.overlap(ex_131_state))
+        F_131_2 = np.abs(psi.overlap(ex_131_two_state))
+        F_131_3 = np.abs(psi.overlap(ex_131_three_state))
+        F_202_1 = np.abs(psi.overlap(ex_202_state))
+        F_202_2 = np.abs(psi.overlap(ex_202_two_state))
+        F_202_3 = np.abs(psi.overlap(ex_202_three_state))
+        F_040_1 = np.abs(psi.overlap(ex_040_state))
+        F_040_2 = np.abs(psi.overlap(ex_040_two_state))
+        F_040_3 = np.abs(psi.overlap(ex_040_three_state))
+        write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, 1.0, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, 0, path )
+    else:
+        write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, 1.0, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., EE, 0, path )
 
     ################
     # after quench #
@@ -584,19 +588,23 @@ if __name__ == "__main__":
                 Dcor = psi_d.overlap( psi_T_d )
 
             F = np.abs(psi.overlap(psi0))
-            F_CDW = np.abs(psi.overlap(cdw_state))
-            F_LR1 = np.abs(psi.overlap(lr1_state))
-            F_LR2 = np.abs(psi.overlap(lr2_state))
-            F_131_1 = np.abs(psi.overlap(ex_131_state))
-            F_131_2 = np.abs(psi.overlap(ex_131_two_state))
-            F_131_3 = np.abs(psi.overlap(ex_131_three_state))
-            F_202_1 = np.abs(psi.overlap(ex_202_state))
-            F_202_2 = np.abs(psi.overlap(ex_202_two_state))
-            F_202_3 = np.abs(psi.overlap(ex_202_three_state))
-            F_040_1 = np.abs(psi.overlap(ex_040_state))
-            F_040_2 = np.abs(psi.overlap(ex_040_two_state))
-            F_040_3 = np.abs(psi.overlap(ex_040_three_state))
-            write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, tdvp_engine.evolved_time, path )
+            if init_state == '1-half-a':
+                F_CDW = np.abs(psi.overlap(cdw_state))
+                F_LR1 = np.abs(psi.overlap(lr1_state))
+                F_LR2 = np.abs(psi.overlap(lr2_state))
+                F_131_1 = np.abs(psi.overlap(ex_131_state))
+                F_131_2 = np.abs(psi.overlap(ex_131_two_state))
+                F_131_3 = np.abs(psi.overlap(ex_131_three_state))
+                F_202_1 = np.abs(psi.overlap(ex_202_state))
+                F_202_2 = np.abs(psi.overlap(ex_202_two_state))
+                F_202_3 = np.abs(psi.overlap(ex_202_three_state))
+                F_040_1 = np.abs(psi.overlap(ex_040_state))
+                F_040_2 = np.abs(psi.overlap(ex_040_two_state))
+                F_040_3 = np.abs(psi.overlap(ex_040_three_state))
+                write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, tdvp_engine.evolved_time, path )
+            else:
+                write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., EE, 0, path )
+
 
             if args.d_corr_func:
                 dc_corr_func(psi, L, tdvp_engine.evolved_time, path)
