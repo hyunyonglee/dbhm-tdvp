@@ -603,7 +603,7 @@ if __name__ == "__main__":
                 F_040_3 = np.abs(psi.overlap(ex_040_three_state))
                 write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, F_CDW, F_LR1, F_LR2, F_131_1, F_131_2, F_131_3, F_202_1, F_202_2, F_202_3, F_040_1, F_040_2, F_040_3, EE, tdvp_engine.evolved_time, path )
             else:
-                write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., EE, 0, path )
+                write_data( Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, Bcor, Ncor, Dcor, F, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., EE, tdvp_engine.evolved_time, path )
 
 
             if args.d_corr_func:
