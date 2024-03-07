@@ -412,7 +412,7 @@ if __name__ == "__main__":
         'chi_max': chi0,
         'svd_min': 1.e-9
     },
-    'chi_list': { 0: 2}, #{ 0: 10, 5: 20, 10: chi0 },
+    'chi_list': { 0: 10}, #{ 0: 10, 5: 20, 10: chi0 },
     'max_E_err': 1.0e-9,
     'max_S_err': 1.0e-9,
     'max_sweeps': 1, #100,
