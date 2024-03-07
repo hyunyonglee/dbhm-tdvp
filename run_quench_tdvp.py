@@ -415,7 +415,7 @@ if __name__ == "__main__":
     'chi_list': { 0: 10, 5: 20, 10: chi0 },
     'max_E_err': 1.0e-9,
     'max_S_err': 1.0e-9,
-    'max_sweeps': 100,
+    'max_sweeps': 2, #100,
     'combine' : True
     }
 
@@ -469,9 +469,9 @@ if __name__ == "__main__":
         ex_040_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_two_configuration(L), bc=DBHM0.lat.bc_MPS)
         ex_040_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_three_configuration(L), bc=DBHM0.lat.bc_MPS)
         
-    # eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
-    # E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
-    # psi.canonical_form()
+    eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
+    E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
+    psi.canonical_form()
     psi0 = psi.copy()
 
     if args.autocorr:
