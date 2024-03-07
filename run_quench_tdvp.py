@@ -469,9 +469,9 @@ if __name__ == "__main__":
         ex_040_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_two_configuration(L), bc=DBHM0.lat.bc_MPS)
         ex_040_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_three_configuration(L), bc=DBHM0.lat.bc_MPS)
         
-    eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
-    E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
-    psi.canonical_form()
+    # eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
+    # E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
+    # psi.canonical_form()
     psi0 = psi.copy()
 
     if args.autocorr:
