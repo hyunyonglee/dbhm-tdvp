@@ -435,6 +435,16 @@ if __name__ == "__main__":
             raise ValueError("Length must be 4n+2.")
         else:
             product_state = ['1', '1', '2', '2'] * (L // 4) + ['1','1']
+    elif init_state == 'fractional1':
+        if L % 4 != 0:
+            raise ValueError("Length must be 4n.")
+        else:
+            product_state = ['1', '1', '1', '2'] * (L // 4)
+    elif init_state == 'fractional2':
+        if L % 4 != 0:
+            raise ValueError("Length must be 4n.")
+        else:
+            product_state = ['1', '2', '2', '2'] * (L // 4)
     elif init_state == '3':
         product_state = ['3'] * L
     elif init_state == '4':
