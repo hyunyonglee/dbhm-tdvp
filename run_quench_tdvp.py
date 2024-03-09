@@ -70,6 +70,9 @@ def ex_131_two_configuration(L):
     else:
         ex_state[J:J+3] = ['1','3','1']
 
+    # test
+    ex_state = ['1', '1', '3', '1'] * (L//4) + ['1']
+
     return ex_state
 
 def ex_202_two_configuration(L):
@@ -91,6 +94,7 @@ def ex_202_two_configuration(L):
     else:
         ex_state[J:J+3] = ['2','0','2']
 
+    ex_state = ['2', '0', '2', '2'] * (L//4) + ['1']
     return ex_state
 
 def ex_040_two_configuration(L):
