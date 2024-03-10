@@ -379,14 +379,8 @@ if __name__ == "__main__":
         lr1_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr1_configuration(L), bc=DBHM0.lat.bc_MPS)
         lr2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr2_configuration(L), bc=DBHM0.lat.bc_MPS)
         ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_configuration(L), bc=DBHM0.lat.bc_MPS)
-        ex_131_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_two_configuration(L), bc=DBHM0.lat.bc_MPS)
-        ex_131_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_three_configuration(L), bc=DBHM0.lat.bc_MPS)
         ex_202_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_configuration(L), bc=DBHM0.lat.bc_MPS)
-        ex_202_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_two_configuration(L), bc=DBHM0.lat.bc_MPS)
-        ex_202_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_202_three_configuration(L), bc=DBHM0.lat.bc_MPS)
         ex_040_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_configuration(L), bc=DBHM0.lat.bc_MPS)
-        ex_040_two_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_two_configuration(L), bc=DBHM0.lat.bc_MPS)
-        ex_040_three_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_040_three_configuration(L), bc=DBHM0.lat.bc_MPS)
         
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
