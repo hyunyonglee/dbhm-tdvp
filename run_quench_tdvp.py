@@ -377,7 +377,7 @@ if __name__ == "__main__":
     cdw_state = psi.copy()
 
     if init_state == '1-half-a':
-        coherent_state = coherent_state(L, Ncut, 1.0)
+        coh_state = coherent_state(L, Ncut, 1.0)
         lr1_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr1_configuration(L), bc=DBHM0.lat.bc_MPS)
         lr2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr2_configuration(L), bc=DBHM0.lat.bc_MPS)
         ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_configuration(L), bc=DBHM0.lat.bc_MPS)
@@ -419,7 +419,7 @@ if __name__ == "__main__":
     
     Ns, NNs, Cnn_center, Dsp_center1, Dsp_center2, Qsp_center1, Qsp_center2, EE = measurements(psi, L)
     if init_state == '1-half-a':
-        F_COH = np.abs(coherent_state.overlap( MPS_drop_charge(psi)) )
+        F_COH = np.abs(coh_state.overlap( MPS_drop_charge(psi)) )
         F_CDW = np.abs(psi.overlap(cdw_state))
         F_LR1 = np.abs(psi.overlap(lr1_state))
         F_LR2 = np.abs(psi.overlap(lr2_state))
@@ -509,7 +509,7 @@ if __name__ == "__main__":
 
             F = np.abs(psi.overlap(psi0))
             if init_state == '1-half-a':
-                F_COH = np.abs(coherent_state.overlap( MPS_drop_charge(psi)) )
+                F_COH = np.abs(coh_state.overlap( MPS_drop_charge(psi)) )
                 F_CDW = np.abs(psi.overlap(cdw_state))
                 F_LR1 = np.abs(psi.overlap(lr1_state))
                 F_LR2 = np.abs(psi.overlap(lr2_state))
