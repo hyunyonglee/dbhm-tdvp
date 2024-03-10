@@ -509,8 +509,8 @@ if __name__ == "__main__":
 
             F = np.abs(psi.overlap(psi0))
             if init_state == '1-half-a':
-                coh_state = coherent_state(L, Ncut, 1.0)
-                F_COH = np.abs(coh_state.overlap( MPS_drop_charge(psi)) )
+                # coh_state = coherent_state(L, Ncut, 1.0)
+                F_COH = np.abs(coh_state.overlap( psi ) )
                 F_CDW = np.abs(psi.overlap(cdw_state))
                 F_LR1 = np.abs(psi.overlap(lr1_state))
                 F_LR2 = np.abs(psi.overlap(lr2_state))
