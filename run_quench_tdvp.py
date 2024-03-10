@@ -39,7 +39,7 @@ def MPS_drop_charge(psi, charge=None, chinfo=None, permute_p_leg=True):
     psi_c.test_sanity()
     return psi_c
 
-def coherent_state(L, Ncut, p):
+def coherent_state(L, Ncut, p1, p2):
 
     T1 = np.zeros((Ncut+1,1,3), dtype='complex_')
     Ta = np.zeros((Ncut+1,3,3), dtype='complex_')
@@ -52,10 +52,10 @@ def coherent_state(L, Ncut, p):
     Ta[1,0,0] = 1.
     Ta[2,0,1] = 1.
     Ta[2,1,0] = 1.
-    Ta[3,2,2] = p
+    Ta[3,2,2] = p1
 
     Tb[2,0,0] = 1.
-    Tb[0,1,1] = 0.
+    Tb[0,1,1] = p2
     Tb[1,2,0] = 1.
     Tb[1,0,2] = 1.
 
@@ -287,6 +287,8 @@ if __name__ == "__main__":
     parser.add_argument("--Mstep", default='5', help="Measurement time step")
     parser.add_argument("--Pstep", default='1000', help="Wavefunction save time step")
     parser.add_argument("--dt", default='0.1', help="Delta time")
+    parser.add_argument("--p1", default='1.0', help="fugacity of 131 state")
+    parser.add_argument("--p2", default='1.0', help="fugacity of 202 state")
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
     parser.add_argument('--autocorr', action='store_true', help='enable autocorrelation function calculation')
@@ -305,6 +307,8 @@ if __name__ == "__main__":
     Mstep = int(args.Mstep)
     Pstep = int(args.Pstep)
     dt = float(args.dt)
+    p1 = float(args.p1)
+    p2 = float(args.p2)
     init_state = args.init_state
     path = args.path
     
@@ -377,7 +381,7 @@ if __name__ == "__main__":
     cdw_state = psi.copy()
 
     if init_state == '1-half-a':
-        coh_state = coherent_state(L, Ncut, 1.0)
+        coh_state = coherent_state(L, Ncut, p1, p2)
         lr1_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr1_configuration(L), bc=DBHM0.lat.bc_MPS)
         lr2_state = MPS.from_product_state(DBHM0.lat.mps_sites(), lr2_configuration(L), bc=DBHM0.lat.bc_MPS)
         ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), ex_131_configuration(L), bc=DBHM0.lat.bc_MPS)
@@ -509,7 +513,6 @@ if __name__ == "__main__":
 
             F = np.abs(psi.overlap(psi0))
             if init_state == '1-half-a':
-                coh_state = coherent_state(L, Ncut, 1.0)
                 F_COH = np.abs(coh_state.overlap( MPS_drop_charge(psi,permute_p_leg=False)) )
                 F_CDW = np.abs(psi.overlap(cdw_state))
                 F_LR1 = np.abs(psi.overlap(lr1_state))
