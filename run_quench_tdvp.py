@@ -41,10 +41,10 @@ def MPS_drop_charge(psi, charge=None, chinfo=None, permute_p_leg=True):
 
 def coherent_state(L, Ncut, p):
 
-    T1 = np.zeros((Ncut+1,1,3))
-    Ta = np.zeros((Ncut+1,3,3))
-    Tb = np.zeros((Ncut+1,3,3))
-    TL = np.zeros((Ncut+1,3,1))
+    T1 = np.zeros((Ncut+1,1,3), dtype=complex)
+    Ta = np.zeros((Ncut+1,3,3), dtype=complex)
+    Tb = np.zeros((Ncut+1,3,3), dtype=complex)
+    TL = np.zeros((Ncut+1,3,1), dtype=complex)
 
     T1[1,0,0] = 1
     T1[2,0,1] = 1
@@ -76,7 +76,7 @@ def coherent_state(L, Ncut, p):
 
     # Create the MPS
     psi = MPS(sites, tensors, SVs)
-    psi.canonical_form
+    psi.canonical_form()
     return psi
 
 def ex_131_configuration(L):
