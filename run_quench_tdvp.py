@@ -41,10 +41,10 @@ def MPS_drop_charge(psi, charge=None, chinfo=None, permute_p_leg=True):
 
 def coherent_state(L, Ncut, p):
 
-    T1 = np.zeros((Ncut+1,1,3), dtype=np.complex)
-    Ta = np.zeros((Ncut+1,3,3), dtype=np.complex)
-    Tb = np.zeros((Ncut+1,3,3), dtype=np.complex)
-    TL = np.zeros((Ncut+1,3,1), dtype=np.complex)
+    T1 = np.zeros((Ncut+1,1,3), dtype='complex_')
+    Ta = np.zeros((Ncut+1,3,3), dtype='complex_')
+    Tb = np.zeros((Ncut+1,3,3), dtype='complex_')
+    TL = np.zeros((Ncut+1,3,1), dtype='complex_')
 
     T1[1,0,0] = 1.
     T1[2,0,1] = 1.
@@ -62,10 +62,10 @@ def coherent_state(L, Ncut, p):
     TL[1,0,0] = 1.
     TL[2,1,0] = 1.
 
-    T1A = npc.Array.from_ndarray_trivial(T1, labels=['p','vL','vR'])
-    TaA = npc.Array.from_ndarray_trivial(Ta, labels=['p','vL','vR'])
-    TbA = npc.Array.from_ndarray_trivial(Tb, labels=['p','vL','vR'])
-    TLA = npc.Array.from_ndarray_trivial(TL, labels=['p','vL','vR'])
+    T1A = npc.Array.from_ndarray_trivial(T1, labels=['p','vL','vR'], dtype='complex_')
+    TaA = npc.Array.from_ndarray_trivial(Ta, labels=['p','vL','vR'], dtype='complex_')
+    TbA = npc.Array.from_ndarray_trivial(Tb, labels=['p','vL','vR'], dtype='complex_')
+    TLA = npc.Array.from_ndarray_trivial(TL, labels=['p','vL','vR'], dtype='complex_')
 
     tensors = [TaA, TbA, TaA, TbA] * (L//4) + [TLA]
     tensors[0] = T1A
