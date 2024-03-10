@@ -62,7 +62,12 @@ def coherent_state(L, Ncut, p):
     TL[1,0,0] = 1
     TL[2,1,0] = 1
 
-    tensors = [ T1, Tb, Ta, Tb ] * (L//4) + [TL]
+    T1A = npc.Array.from_ndarray_trivial(T1, labels=['p','vL','vR'])
+    TaA = npc.Array.from_ndarray_trivial(Ta, labels=['p','vL','vR'])
+    TbA = npc.Array.from_ndarray_trivial(Tb, labels=['p','vL','vR'])
+    TLA = npc.Array.from_ndarray_trivial(TL, labels=['p','vL','vR'])
+
+    tensors = [ T1A, TbA, TaA, TbA ] * (L//4) + [TLA]
     SVs = [np.ones(3)] * (L+1)  # Singular values of the tensors
 
     # Define the sites (assuming a spin-1/2 chain)
