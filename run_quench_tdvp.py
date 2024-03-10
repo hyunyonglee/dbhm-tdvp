@@ -75,7 +75,9 @@ def coherent_state(L, Ncut, p):
     sites = [BosonSite(Nmax=Ncut, conserve=None) for _ in range(L)]
 
     # Create the MPS
-    return MPS(sites, tensors, SVs)
+    psi = MPS(sites, tensors, SVs)
+    psi.canonical_form
+    return psi
 
 def ex_131_configuration(L):
     
