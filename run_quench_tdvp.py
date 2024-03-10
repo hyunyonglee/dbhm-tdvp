@@ -46,21 +46,21 @@ def coherent_state(L, Ncut, p):
     Tb = np.zeros((Ncut+1,3,3), dtype='complex_')
     TL = np.zeros((Ncut+1,3,1), dtype='complex_')
 
-    T1[1,0,0] = 1
-    T1[2,0,1] = 1
+    T1[1,0,0] = 1.
+    T1[2,0,1] = 1.
 
-    Ta[1,0,0] = 1
-    Ta[2,0,1] = 1
-    Ta[2,1,0] = 1
+    Ta[1,0,0] = 1.
+    Ta[2,0,1] = 1.
+    Ta[2,1,0] = 1.
     Ta[3,2,2] = p
 
-    Tb[2,0,0] = 1
-    Tb[0,1,1] = p
-    Tb[1,2,0] = 1
-    Tb[1,0,2] = 1
+    Tb[2,0,0] = 1.
+    Tb[0,1,1] = 0.
+    Tb[1,2,0] = 1.
+    Tb[1,0,2] = 1.
 
-    TL[1,0,0] = 1
-    TL[2,1,0] = 1
+    TL[1,0,0] = 1.
+    TL[2,1,0] = 1.
 
     T1A = npc.Array.from_ndarray_trivial(T1, labels=['p','vL','vR'])
     TaA = npc.Array.from_ndarray_trivial(Ta, labels=['p','vL','vR'])
