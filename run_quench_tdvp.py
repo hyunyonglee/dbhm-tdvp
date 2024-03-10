@@ -41,10 +41,10 @@ def MPS_drop_charge(psi, charge=None, chinfo=None, permute_p_leg=True):
 
 def coherent_state(L, Ncut, p):
 
-    T1 = np.zeros((Ncut+1,1,3), dtype=complex)
-    Ta = np.zeros((Ncut+1,3,3), dtype=complex)
-    Tb = np.zeros((Ncut+1,3,3), dtype=complex)
-    TL = np.zeros((Ncut+1,3,1), dtype=complex)
+    T1 = np.zeros((Ncut+1,1,3), dtype='complex_')
+    Ta = np.zeros((Ncut+1,3,3), dtype='complex_')
+    Tb = np.zeros((Ncut+1,3,3), dtype='complex_')
+    TL = np.zeros((Ncut+1,3,1), dtype='complex_')
 
     T1[1,0,0] = 1
     T1[2,0,1] = 1
