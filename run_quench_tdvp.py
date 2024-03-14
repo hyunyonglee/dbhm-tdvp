@@ -73,7 +73,7 @@ def coherent_state(L, Ncut, p1, p2):
 
     tensors = [TaA, TbA, TaA, TbA] * (L//4) + [TLA]
     tensors[0] = T1A
-    SVs = [np.ones(3)] * (L+1)  # Singular values of the tensors
+    SVs = [np.ones(4)] * (L+1)  # Singular values of the tensors
 
     # Define the sites (assuming a spin-1/2 chain)
     sites = [BosonSite(Nmax=Ncut, conserve=None) for _ in range(L)]
