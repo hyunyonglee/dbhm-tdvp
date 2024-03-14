@@ -159,8 +159,8 @@ class EFFECTIVE_PXP2(CouplingModel,MPOModel):
         # self.add_multi_coupling( -np.sqrt(6)*J, [('P', 0, 0), ('X1', 1, 0), ('P', 2, 0)])
         # self.add_multi_coupling( -np.sqrt(2)*J, [('P', 0, 0), ('X2', 1, 0), ('P', 2, 0)])
         
-        self.add_multi_coupling( -np.sqrt(6)*J, [('P',[-1,0],1),('Sigmax',[0,0],0),('P',[0,0],1)] )
-        self.add_multi_coupling( -np.sqrt(2)*J, [('P',[-1,0],0),('P',[-1,0],1),('Sigmax',[0,0],1),('P',[1,0],0),('P',[1,0],1)] )
+        self.add_multi_coupling( -2*np.sqrt(6)*J, [('P',[-1,0],1),('Sigmax',[0,0],0),('P',[0,0],1)] )
+        self.add_multi_coupling( -2*np.sqrt(2)*J, [('P',[-1,0],0),('P',[-1,0],1),('Sigmax',[0,0],1),('P',[1,0],0),('P',[1,0],1)] )
         
         # Onsite Hubbard Interaction
         self.add_onsite( U, 0, 'N')

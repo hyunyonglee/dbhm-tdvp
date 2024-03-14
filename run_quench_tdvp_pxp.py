@@ -1,7 +1,10 @@
 import numpy as np
 import model
+import tenpy
 from tenpy.algorithms import tdvp, dmrg
 from tenpy.networks.mps import MPS
+from tenpy.networks.site import BosonSite
+import tenpy.linalg.np_conserved as npc
 import os, os.path
 import argparse
 import logging.config
@@ -14,6 +17,51 @@ def ensure_dir(f):
     if not os.path.exists(d):
         os.makedirs(d)
     return d
+
+def coherent_state(L, p1, p2):
+
+    T1 = np.zeros((2,1,4), dtype='complex_')
+    Ta = np.zeros((2,4,4), dtype='complex_')
+    Tb = np.zeros((2,4,4), dtype='complex_')
+    TL = np.zeros((2,4,1), dtype='complex_')
+
+    T1[1,0,0] = 1.
+    T1[2,0,1] = 1.
+
+    Ta[1,0,0] = 1.
+    Ta[2,0,1] = 1.
+    Ta[2,1,0] = 1.
+    Ta[3,2,2] = p1
+    Ta[3,3,3] = p1
+
+    Tb[2,0,0] = 1.
+    Tb[0,1,1] = p2
+    Tb[1,2,0] = 1.
+    Tb[1,0,2] = 1.
+    
+    Tb[0,2,3] = 1.
+    Tb[1,3,0] = 1.
+
+    TL[1,0,0] = 1.
+    TL[2,1,0] = 1.
+
+    T1A = npc.Array.from_ndarray_trivial(T1, labels=['p','vL','vR'], dtype='complex_')
+    TaA = npc.Array.from_ndarray_trivial(Ta, labels=['p','vL','vR'], dtype='complex_')
+    TbA = npc.Array.from_ndarray_trivial(Tb, labels=['p','vL','vR'], dtype='complex_')
+    TLA = npc.Array.from_ndarray_trivial(TL, labels=['p','vL','vR'], dtype='complex_')
+
+    tensors = [TaA, TbA, TaA, TbA] * (L//4) + [TLA]
+    tensors[0] = T1A
+    SVs = [np.ones(3)] * (L+1)  # Singular values of the tensors
+
+    # Define the sites (assuming a spin-1/2 chain)
+    sites = [BosonSite(Nmax=Ncut, conserve=None) for _ in range(L)]
+
+    # Create the MPS
+    psi = MPS(sites, tensors, SVs)
+    psi.canonical_form()
+    return psi
+
 
 if __name__ == "__main__":
     
