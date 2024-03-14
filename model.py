@@ -100,12 +100,16 @@ class EFFECTIVE_PXP(CouplingModel,MPOModel):
         site_L = GroupedSite([site, site])
         
         P = np.array([[1.,0.,0.,0.],[0.,0.,0.,0.],[0.,0.,0.,0.],[0.,0.,0.,0.]])
+        P1 = np.array([[1.,0.,0.,0.],[0.,1.,0.,0.],[0.,0.,0.,0.],[0.,0.,0.,0.]])
+        P2 = np.array([[1.,0.,0.,0.],[0.,0.,0.,0.],[0.,0.,1.,0.],[0.,0.,0.,0.]])
         X1 = np.array([[0.,0.,1.,0.],[0.,0.,0.,1.],[1.,0.,0.,0.],[0.,1.,0.,0.]])
         X2 = np.array([[0.,1.,0.,0.],[1.,0.,0.,0.],[0.,0.,0.,1.],[0.,0.,1.,0.]])
         N1 = np.array([[0.,0.,0.,0.],[0.,0.,0.,0.],[0.,0.,1.,0.],[0.,0.,0.,1.]])
         N2 = np.array([[0.,0.,0.,0.],[0.,1.,0.,0.],[0.,0.,0.,0.],[0.,0.,0.,1.]])
         
         site_L.add_op('P', P)
+        site_L.add_op('P1', P1)
+        site_L.add_op('P2', P2)
         site_L.add_op('X1', X1)
         site_L.add_op('X2', X2)
         site_L.add_op('N1', N1)
@@ -115,14 +119,52 @@ class EFFECTIVE_PXP(CouplingModel,MPOModel):
         CouplingModel.__init__(self, lat)
 
         # PXP    
-        # self.add_multi_coupling( -2*np.sqrt(6)*J/U, [('P', 0, 0), ('X1', 1, 0), ('P', 2, 0)])
-        # self.add_multi_coupling( -2*np.sqrt(2)*J/U, [('P', 0, 0), ('X2', 1, 0), ('P', 2, 0)])
+        # self.add_multi_coupling( -np.sqrt(6)*J, [('P', 0, 0), ('X1', 1, 0), ('P', 2, 0)])
+        # self.add_multi_coupling( -np.sqrt(2)*J, [('P', 0, 0), ('X2', 1, 0), ('P', 2, 0)])
         
-        self.add_multi_coupling( -2*np.sqrt(6)*J, [('P', 0, 0), ('X1', 1, 0), ('P', 2, 0)])
-        self.add_multi_coupling( -2*np.sqrt(2)*J, [('P', 0, 0), ('X2', 1, 0), ('P', 2, 0)])
+        self.add_multi_coupling( -np.sqrt(6)*J, [('P2', 0, 0), ('X1', 1, 0), ('P2', 1, 0)])
+        self.add_multi_coupling( -np.sqrt(2)*J, [('P2', 0, 0), ('P1', 1, 0), ('X2', 1, 0), ('P', 2, 0)])
         
         # Onsite Hubbard Interaction
         self.add_onsite( U, 0, 'N1')
         self.add_onsite( U, 0, 'N2')
 
         MPOModel.__init__(self, lat, self.calc_H_MPO())
+
+
+class EFFECTIVE_PXP2(CouplingModel,MPOModel):
+    
+    def __init__(self, model_params):
+        
+        # 0) read out/set default parameters 
+        if not isinstance(model_params, Config):
+            model_params = Config(model_params, "DIPOLAR_BOSE_HUBBARD")
+        L = model_params.get('L', 1)
+        J = model_params.get('J', 1.)
+        U = model_params.get('U', 1.)
+
+        site = SpinHalfSite(conserve=None)
+        P = np.array([[1.,0.],[0.,0.]])
+        N = np.array([[0,0.],[0.,1]])
+        site.add_op('P', P)
+        site.add_op('N', N)
+        
+        basis = [ [2,0], [0,1] ]
+        pos = [ [0,0], [1,0] ]
+        nn = [ (0, 1, [0,0]), (1, 0, [1,0]) ] 
+        lat = Lattice( Ls=[L, 1], unit_cell=[site, ], basis=basis, positions=pos, bc='open', bc_MPS='finite', nearest_neighbors=nn)
+        CouplingModel.__init__(self, lat)
+
+        # PXP    
+        # self.add_multi_coupling( -np.sqrt(6)*J, [('P', 0, 0), ('X1', 1, 0), ('P', 2, 0)])
+        # self.add_multi_coupling( -np.sqrt(2)*J, [('P', 0, 0), ('X2', 1, 0), ('P', 2, 0)])
+        
+        self.add_multi_coupling( -np.sqrt(6)*J, [('P',[-1,0],1),('Sigmax',[0,0],0),('P',[0,0],1)] )
+        self.add_multi_coupling( -np.sqrt(2)*J, [('P',[-1,0],0),('P',[-1,0],1),('Sigmax',[0,0],1),('P',[1,0],0),('P',[1,0],1)] )
+        
+        # Onsite Hubbard Interaction
+        self.add_onsite( U, 0, 'N')
+        self.add_onsite( U, 1, 'N')
+
+        MPOModel.__init__(self, lat, self.calc_H_MPO())
+
