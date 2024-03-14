@@ -152,7 +152,7 @@ class EFFECTIVE_PXP2(CouplingModel,MPOModel):
         basis = [ [2,0], [0,1] ]
         pos = [ [0,0], [1,0] ]
         nn = [ (0, 1, [0,0]), (1, 0, [1,0]) ] 
-        lat = Lattice( Ls=[L, 1], unit_cell=[site, ], basis=basis, positions=pos, bc='open', bc_MPS='finite', nearest_neighbors=nn)
+        lat = Lattice( Ls=[L, 1], unit_cell=[site, site], basis=basis, positions=pos, bc='open', bc_MPS='finite', nearest_neighbors=nn)
         CouplingModel.__init__(self, lat)
 
         # PXP    
