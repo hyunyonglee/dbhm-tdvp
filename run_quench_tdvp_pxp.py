@@ -3,7 +3,7 @@ import model
 import tenpy
 from tenpy.algorithms import tdvp, dmrg
 from tenpy.networks.mps import MPS
-from tenpy.networks.site import BosonSite
+from tenpy.networks.site import SpinHalfSite
 import tenpy.linalg.np_conserved as npc
 import os, os.path
 import argparse
@@ -20,42 +20,33 @@ def ensure_dir(f):
 
 def coherent_state(L, p1, p2):
 
-    T1 = np.zeros((2,1,4), dtype='complex_')
-    Ta = np.zeros((2,4,4), dtype='complex_')
-    Tb = np.zeros((2,4,4), dtype='complex_')
-    TL = np.zeros((2,4,1), dtype='complex_')
+    T1 = np.zeros((2,1,1), dtype='complex_')
+    Ta = np.zeros((2,1,1), dtype='complex_')
+    Tb = np.zeros((2,1,1), dtype='complex_')
+    TL = np.zeros((2,1,1), dtype='complex_')
 
-    T1[1,0,0] = 1.
-    T1[2,0,1] = 1.
+    T1[0,0,0] = 1.
+    T1[1,0,0] = p1
 
-    Ta[1,0,0] = 1.
-    Ta[2,0,1] = 1.
-    Ta[2,1,0] = 1.
-    Ta[3,2,2] = p1
-    Ta[3,3,3] = p1
-
-    Tb[2,0,0] = 1.
-    Tb[0,1,1] = p2
-    Tb[1,2,0] = 1.
-    Tb[1,0,2] = 1.
+    Ta[0,0,0] = 1.
+    Ta[1,0,0] = p1
     
-    Tb[0,2,3] = 1.
-    Tb[1,3,0] = 1.
-
-    TL[1,0,0] = 1.
-    TL[2,1,0] = 1.
-
+    Tb[0,0,0] = 1.
+    
+    TL[0,0,0] = 1.
+    
     T1A = npc.Array.from_ndarray_trivial(T1, labels=['p','vL','vR'], dtype='complex_')
     TaA = npc.Array.from_ndarray_trivial(Ta, labels=['p','vL','vR'], dtype='complex_')
     TbA = npc.Array.from_ndarray_trivial(Tb, labels=['p','vL','vR'], dtype='complex_')
     TLA = npc.Array.from_ndarray_trivial(TL, labels=['p','vL','vR'], dtype='complex_')
 
-    tensors = [TaA, TbA, TaA, TbA] * (L//4) + [TLA]
+    tensors = [TaA, TbA] * (L//2)
     tensors[0] = T1A
-    SVs = [np.ones(3)] * (L+1)  # Singular values of the tensors
+    tensors[L-1] = TLA
+    SVs = [np.ones(1)] * (L+1)  # Singular values of the tensors
 
     # Define the sites (assuming a spin-1/2 chain)
-    sites = [BosonSite(Nmax=Ncut, conserve=None) for _ in range(L)]
+    sites = [SpinHalfSite(conserve=None) for _ in range(L)]
 
     # Create the MPS
     psi = MPS(sites, tensors, SVs)
@@ -94,6 +85,7 @@ if __name__ == "__main__":
     parser.add_argument("--chi", default='500', help="Bond dimension (after quench)")
     parser.add_argument("--Ntot", default='10', help="Total time steps")
     parser.add_argument("--dt", default='0.1', help="Delta time")
+    parser.add_argument("--p", default='1.0', help="Fugacity")
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
     args = parser.parse_args()
@@ -107,6 +99,7 @@ if __name__ == "__main__":
     chi = int(args.chi)
     Ntot = int(args.Ntot)
     dt = float(args.dt)
+    p = float(args.p)
     init_state = args.init_state
     path = args.path
     
@@ -153,6 +146,7 @@ if __name__ == "__main__":
 
     ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state2, bc=DBHM0.lat.bc_MPS)
     ex_202_state = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state3, bc=DBHM0.lat.bc_MPS)
+    c_state = coherent_state(L, p1=p, p2=0.0)
     
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
@@ -163,9 +157,10 @@ if __name__ == "__main__":
     F_CDW = np.abs(psi.overlap(cdw_state))
     F_131 = np.abs(psi.overlap(ex_131_state))
     F_202 = np.abs(psi.overlap(ex_202_state))
+    F_COH = np.abs(psi.overlap(c_state))
 
     file = open(path+"/observables.txt","a", 1)    
-    file.write(repr(0.) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(1.0) + " " + repr(F_CDW) + " " + repr(F_131) + " " + repr(F_202) + " " + "\n")
+    file.write(repr(0.) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(1.0) + " " + repr(F_CDW) + " " + repr(F_131) + " " + repr(F_202) + " " + repr(F_COH) + " " + "\n")
     
     ################
     # after quench #
@@ -205,8 +200,9 @@ if __name__ == "__main__":
         F_CDW = np.abs(psi.overlap(cdw_state))
         F_131 = np.abs(psi.overlap(ex_131_state))
         F_202 = np.abs(psi.overlap(ex_202_state))
+        F_COH = np.abs(psi.overlap(c_state))
         
-        file.write(repr(tdvp_engine.evolved_time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_131) + " " + repr(F_202) + " " + "\n")
+        file.write(repr(tdvp_engine.evolved_time) + " " + repr(np.max(EE)) + " " + repr(EE[len(EE)//2]) + " " + repr(F) + " " + repr(F_CDW) + " " + repr(F_131) + " " + repr(F_202) + " " + repr(F_COH) + " " + "\n")
     
     file.close()
     
