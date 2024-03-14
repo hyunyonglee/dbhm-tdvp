@@ -140,7 +140,7 @@ if __name__ == "__main__":
         }
     }
 
-    DBHM = model.EFFECTIVE_PXP(model_params)    
+    DBHM = model.EFFECTIVE_PXP2(model_params)    
     tdvp_engine = tdvp.TwoSiteTDVPEngine(psi, DBHM, tdvp_params)
     tdvp_two_site = True
     
