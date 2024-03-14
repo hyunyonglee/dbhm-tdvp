@@ -40,13 +40,13 @@ def coherent_state(L, p1, p2):
     TbA = npc.Array.from_ndarray_trivial(Tb, labels=['p','vL','vR'], dtype='complex_')
     TLA = npc.Array.from_ndarray_trivial(TL, labels=['p','vL','vR'], dtype='complex_')
 
-    tensors = [TaA, TbA] * (L//2)
+    tensors = [TaA, TbA] * L
     tensors[0] = T1A
     tensors[L-1] = TLA
-    SVs = [np.ones(1)] * (L+1)  # Singular values of the tensors
+    SVs = [np.ones(1)] * (2*L+1)  # Singular values of the tensors
 
     # Define the sites (assuming a spin-1/2 chain)
-    sites = [SpinHalfSite(conserve=None) for _ in range(L)]
+    sites = [SpinHalfSite(conserve=None) for _ in range(2*L)]
 
     # Create the MPS
     psi = MPS(sites, tensors, SVs)
