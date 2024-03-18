@@ -48,7 +48,7 @@ def coherent_state(L, p1, p2):
 
     tensors = [TaA, TbA] * L
     tensors[0] = T1A
-    tensors[L-1] = TLA
+    tensors[2*L-1] = TLA
     SVs = [np.ones(3)] * (2*L+1)  # Singular values of the tensors
 
     # Define the sites (assuming a spin-1/2 chain)
