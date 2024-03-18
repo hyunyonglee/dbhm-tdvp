@@ -20,20 +20,26 @@ def ensure_dir(f):
 
 def coherent_state(L, p1, p2):
 
-    T1 = np.zeros((2,1,1), dtype='complex_')
-    Ta = np.zeros((2,1,1), dtype='complex_')
-    Tb = np.zeros((2,1,1), dtype='complex_')
-    TL = np.zeros((2,1,1), dtype='complex_')
+    T1 = np.zeros((2,3,3), dtype='complex_')
+    Ta = np.zeros((2,3,3), dtype='complex_')
+    Tb = np.zeros((2,3,3), dtype='complex_')
+    TL = np.zeros((2,3,3), dtype='complex_')
 
     T1[0,0,0] = 1.
-    T1[1,0,0] = p1
-
-    Ta[0,0,0] = 1.
     Ta[1,0,0] = p1
     
+    Ta[0,0,0] = 1.
+    Ta[1,0,0] = p1
+    Ta[0,1,1] = 1.
+    Ta[0,2,2] = 1.
+    
     Tb[0,0,0] = 1.
+    Tb[0,0,1] = 1.
+    Tb[1,1,2] = p2
+    Tb[0,2,0] = 1.
     
     TL[0,0,0] = 1.
+    TL[0,2,0] = 1.
     
     T1A = npc.Array.from_ndarray_trivial(T1, labels=['p','vL','vR'], dtype='complex_')
     TaA = npc.Array.from_ndarray_trivial(Ta, labels=['p','vL','vR'], dtype='complex_')
@@ -43,7 +49,7 @@ def coherent_state(L, p1, p2):
     tensors = [TaA, TbA] * L
     tensors[0] = T1A
     tensors[L-1] = TLA
-    SVs = [np.ones(1)] * (2*L+1)  # Singular values of the tensors
+    SVs = [np.ones(3)] * (2*L+1)  # Singular values of the tensors
 
     # Define the sites (assuming a spin-1/2 chain)
     sites = [SpinHalfSite(conserve=None) for _ in range(2*L)]
@@ -88,6 +94,8 @@ if __name__ == "__main__":
     parser.add_argument("--p", default='1.0', help="Fugacity")
     parser.add_argument("--init_state", default='2', help="Initial state")
     parser.add_argument("--path", default=current_directory, help="path for saving data")
+    parser.add_argument("--p1", default='1.0', help="fugacity of 131 state")
+    parser.add_argument("--p2", default='1.0', help="fugacity of 202 state")
     args = parser.parse_args()
 
     L = int(args.L)
@@ -99,7 +107,8 @@ if __name__ == "__main__":
     chi = int(args.chi)
     Ntot = int(args.Ntot)
     dt = float(args.dt)
-    p = float(args.p)
+    p1 = float(args.p1)
+    p2 = float(args.p2)
     init_state = args.init_state
     path = args.path
     
@@ -146,7 +155,7 @@ if __name__ == "__main__":
 
     ex_131_state = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state2, bc=DBHM0.lat.bc_MPS)
     ex_202_state = MPS.from_product_state(DBHM0.lat.mps_sites(), product_state3, bc=DBHM0.lat.bc_MPS)
-    c_state = coherent_state(L, p1=p, p2=0.0)
+    c_state = coherent_state(L, p1=p1, p2=p2)
     
     eng = dmrg.TwoSiteDMRGEngine(psi, DBHM0, dmrg_params)
     E, psi = eng.run()  # equivalent to dmrg.run() up to the return parameters.
