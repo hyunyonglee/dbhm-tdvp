@@ -20,13 +20,13 @@ def ensure_dir(f):
 
 def coherent_state(L, p1, p2):
 
-    T1 = np.zeros((2,3,3), dtype='complex_')
+    T1 = np.zeros((2,1,3), dtype='complex_')
     Ta = np.zeros((2,3,3), dtype='complex_')
     Tb = np.zeros((2,3,3), dtype='complex_')
-    TL = np.zeros((2,3,3), dtype='complex_')
+    TL = np.zeros((2,3,1), dtype='complex_')
 
     T1[0,0,0] = 1.
-    Ta[1,0,0] = p1
+    T1[1,0,0] = p1
     
     Ta[0,0,0] = 1.
     Ta[1,0,0] = p1
